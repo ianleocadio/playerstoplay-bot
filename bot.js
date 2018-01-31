@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const auth = require("./auth.json")
+//const auth = require("./auth.json")
 
 const Commands = require('./commands/commands.js');
 
