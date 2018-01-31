@@ -4,7 +4,7 @@ const auth = require('./auth/auth.js');
 const Commands = require('./commands/commands.js');
 
 var bot = new Discord.Client({disableEveryone: true});
-console.log(auth);
+
 bot.on("ready", () => {
 	console.log("BOT Online");
 });
@@ -15,6 +15,11 @@ bot.on("message", message => {
 	if(message.content.startsWith("/")){
 		if(message.content.startsWith("/help")){
 			Commands.Help.listHelp(message);
+			return;
+		}
+
+		if(message.content.startsWith("/add")){
+			Commands.Roles.addPlayerRole(message);
 			return;
 		}
 
