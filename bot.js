@@ -28,5 +28,5 @@ bot.on("message", message => {
 
 });
 
-bot.login(auth.token);
+bot.login(auth.token || process.env.BOT_TOKEN);
 
