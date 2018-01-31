@@ -1,3 +1,6 @@
+#Custom projects ignore files
+auth/auth.json
+
 # Logs
 logs
 *.log
