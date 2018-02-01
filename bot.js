@@ -27,28 +27,22 @@ bot.on('guildMemberAdd', member => {
 
 
 bot.on("message", message => {
-	
+	var commands = message.content.toLowerCase().match(/\S+/g);
 
-	if(message.content.startsWith(".")){
-		if(message.content.startsWith(".help") || message.content.startsWith(".h")){
+	if(commands && commands[0].startsWith(".")){
+
+		if(commands[0] === ".help" || commands[0] === ".h"){
 			Commands.Help.listHelp(message);
 			return;
-		}
-
-		if(message.content.startsWith(".add")){
+		}else
+		if(commands[0] === ".add"){
 			Commands.Roles.addPlayerRole(message);
 			return;
-		}
-
-
-
-		if(message.content.startsWith(".music") || message.content.startsWith(".m")){
+		}else
+		if(commands[0] === ".music" || commands[0] === ".m"){
 			Commands.Music.musicCommands(message, bot);
 			return;
 		}
-
-		
-
 		//Comandos...
 
 		//Final
