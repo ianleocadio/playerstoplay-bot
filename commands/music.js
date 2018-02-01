@@ -10,7 +10,7 @@ var server = {
 
 
 function musicCommands(message, bot){
-	var commandArguments = message.content.toLowerCase().split(" ");
+	var commandArguments = message.content.toLowerCase().match(/\S+/g);
 	var command = commandArguments[1];
 
 	if(!command){
@@ -19,37 +19,57 @@ function musicCommands(message, bot){
 
 	if(command === "play" || command === "p"){
 
-		if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www")){
-			play(message, commandArguments[2]);
-		}else{
-			var opts = {
-				maxResults: 10,
-				key: (auth.yt_key || process.env.YT_KEY)
-			}
-			var query = "";
-			commandArguments.shift();
-			commandArguments.shift();
-			commandArguments.map(function(t){
-				query += t + " ";
-			});
-			ytSearch(query, opts, function(error, results){
-				if(error) return console.log(error);
+		if(commandArguments[2]){
+			if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www")){
+				play(message, commandArguments[2]);
+			}else{
+				var opts = {
+					maxResults: 10,
+					key: (auth.yt_key || process.env.YT_KEY)
+				}
+				var query = "";
+				commandArguments.shift();
+				commandArguments.shift();
+				commandArguments.map(function(t){
+					query += t + " ";
+				});
+				ytSearch(query, opts, function(error, results){
+					if(error) return console.log(error);
 
-				play(message, results[0].link);
-			});
+					play(message, results[0].link);
+				});
+			}
+		}else{
+			if (server.dispatcher){
+				server.dispatcher.on("speaking", function(speaking){
+					if(speaking){
+						pause();
+					}else{
+						resume();
+					}
+				});
+			}
 		}
 
 	}else 
 	
 	if(command === "skip"){
-		if (server.dispatcher) server.dispatcher.end();
+		end();
 	}else
 	
 	if(command === "stop"){
 		if(message.guild.voiceConnection){
 			message.guild.voiceConnection.disconnect();
 		}
-	}
+	}else
+
+	if(command === "pause"){
+		pause();
+	}else
+
+	if(command === "resume"){
+		resume();
+	}else
 
 	if(command === "playlist" || command === "pl" || command === "queue" || command === "q"){
 		playlist(message);
@@ -207,8 +227,7 @@ function playing(message){
 		embed.setDescription("**No music is playing**");
 		embed.setTimestamp();
 		message.channel.send(embed);
-	}
-	
+	}	
 }
 
 function musicHelp(message){
@@ -234,7 +253,19 @@ function musicHelp(message){
 	embed.setDescription(helpText);
 	// embed.setTimestamp();
 	message.author.send(embed);
+}
+
+function pause(){
+	if (server.dispatcher) server.dispatcher.pause();
 } 
+
+function resume(){
+	if (server.dispatcher) server.dispatcher.resume();
+} 
+
+function end(){
+	if (server.dispatcher) server.dispatcher.end();
+}
 
 /******************************************************
  *													  *
