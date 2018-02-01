@@ -4,9 +4,9 @@ function authToken(){
 		auth = require('./auth.json');
 	}catch(e){
 		auth = {
-			"token": undefined
+			"token": undefined,
+			"yt_key": undefined
 		}
-		console.log(e);
 	}
 }
 
