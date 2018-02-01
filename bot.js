@@ -3,6 +3,10 @@ const auth = require('./auth/auth.js');
 
 const Commands = require('./commands/commands.js');
 
+
+
+
+
 var bot = new Discord.Client({disableEveryone: true});
 
 bot.on("ready", () => {

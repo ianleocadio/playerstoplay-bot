@@ -1,5 +1,5 @@
 function listHelp(message){
-	message.author.sendMessage(helpText);
+	message.author.send(helpText);
 }
 
 var helpText =
@@ -23,7 +23,6 @@ function possibleCommand(message){
 				if(message.content.startsWith(command))
 					noneOfThen = false;
 			});
-			console.log(noneOfThen);
 			messages.map(function(bm){
 				if(bm.content.startsWith("/") && noneOfThen && (Date.now() - bm.createdTimestamp < 300000))
 					cantExecuteHelpCommand = true;
