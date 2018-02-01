@@ -12,6 +12,4 @@ function authToken(){
 
 authToken();
 
-module.exports = {
-	"token": auth.token
-}
+module.exports = auth

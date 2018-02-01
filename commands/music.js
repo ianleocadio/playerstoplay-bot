@@ -19,9 +19,9 @@ function musicCommands(message, bot){
 
 	if(command === "play" || command === "p"){
 
-		if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www"))
+		if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www")){
 			play(message, commandArguments[2]);
-		else{
+		}else{
 			var opts = {
 				maxResults: 10,
 				key: (auth.yt_key || process.env.YT_KEY)
@@ -78,14 +78,52 @@ function musicCommands(message, bot){
  *													  *
  *													  *
  ******************************************************/
+function formateTime(timeString){
+	var hourString,minString, secString;
+
+	if(timeString >= 3600){
+		var hour = Math.floor(timeString/3600);
+		if(hour < 10)
+			hourString = "0"+hour+":";
+		timeString = timeString%3600;
+	}
+
+	var min = Math.floor(timeString/60);
+	if(min < 10)
+		minString = "0"+min+":";
+
+	var sec = Math.floor(timeString%60);
+	if (sec < 10)
+		secString = "0"+sec;
+
+	return (hourString || hour || "00:") + (minString || min) + (secString || sec);
+}
+
 function playMusic(connection, message){
-	server.dispatcher = connection.playStream(YTDL.downloadFromInfo(server.queue[0], {filter: "audioonly"}));
+	server.dispatcher = connection.playStream(YTDL.downloadFromInfo(server.queue[0].info, {filter: "audioonly"}));
 
 	server.dispatcher.on("end", function(){
 		server.queue.shift();
 		if(server.queue[0]) playMusic(connection, message);
 		else connection.disconnect();
 	});
+}
+
+function playInfo(message, queueObject, queuePosition, title){
+	var embed = new Discord.RichEmbed()
+			.setColor("GREEN");
+	var musicInfo = queueObject.info;
+	var formatedVideoTime = formateTime(musicInfo.length_seconds);
+
+	embed.setDescription("**"+musicInfo.title+"**")
+		 .setAuthor(title)
+		 .addField("Duração", formatedVideoTime, true)
+		 .addField("Pedido por", queueObject.requested_by.username+"#"+queueObject.requested_by.discriminator, true)
+		 .addField("Posição na fila", (queuePosition == 1) ? "Tocando" : queuePosition, true)
+	 	 .setThumbnail(musicInfo.thumbnail_url)
+	 	 .setURL(musicInfo.video_url);
+			
+	message.channel.send(embed);
 }
 
 /******************************************************
@@ -106,7 +144,11 @@ function play(message, searchParam){
 		YTDL.getInfo(searchParam)
 			.then(function(info){
 
-				server.queue.push(info);
+				queuePosition = server.queue.push({
+					"info": info,
+					"requested_by": message.author
+				});
+				playInfo(message, server.queue[0], queuePosition, "Música adicionada!");
 
 				if(!message.guild.voiceConnection){
 					message.member.voiceChannel.join()
@@ -125,17 +167,21 @@ function playlist(message){
 	var embed = new Discord.RichEmbed()
 			.setColor("GREEN");
 	if(server.queue.length >  0){
-		server.queue.map(function(musicInfo, i){
-			var formatedVideoTime = Math.floor(musicInfo.length_seconds/60) + ":" + (musicInfo.length_seconds%60);
+		server.queue.map(function(object, i){
+			var musicInfo = object.info;
+			var formatedVideoTime = formateTime(musicInfo.length_seconds);
 
 			if(i == 0){
-				embed.setDescription("**Now playing:**\n"+musicInfo.title+"\n"+ musicInfo.video_url+" - ("+formatedVideoTime+")")
+				embed.setDescription("**Now playing:**")
+				 	 .addField(musicInfo.title, "("+formatedVideoTime+")", true)
+				 	 .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
 				 	 .setThumbnail(musicInfo.thumbnail_url)
 				 	 .setURL(musicInfo.video_url)
 				 	 .setAuthor("Playlist: ");
 			}else{
 				embed.addBlankField()
-				 	 .addField((i)+" - "+musicInfo.title+"", musicInfo.video_url+" - ("+formatedVideoTime+")");
+				 	 .addField((i+1)+" - "+musicInfo.title, "("+formatedVideoTime+")", true)
+				 	 .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
 			}
 
 			
@@ -149,28 +195,24 @@ function playlist(message){
 		});
 	}else{
 		embed.setAuthor("Playlist: ")
-			 .setDescription("**No music is playing**");
+			 .setDescription("**Nenhuma música na playlist**");
 	}
 	embed.setTimestamp();
 	message.channel.send(embed);
 }
 
 function playing(message){
-	var embed = new Discord.RichEmbed()
-			.setColor("GREEN");
 	if(server.queue.length >  0){
 		var musicInfo = server.queue[0];
-		var formatedVideoTime = Math.floor(musicInfo.length_seconds/60) + ":" + (musicInfo.length_seconds%60);
-
-		embed.setDescription("**Now playing:**\n"+musicInfo.title+"\n"+ musicInfo.video_url+" - ("+formatedVideoTime+")")
-		 	 .setThumbnail(musicInfo.thumbnail_url)
-		 	 .setURL(musicInfo.video_url);
-			
+		playInfo(message, musicInfo, 1, "Tocando agora:");
 	}else{
+		var embed = new Discord.RichEmbed()
+			.setColor("GREEN");
 		embed.setDescription("**No music is playing**");
+		embed.setTimestamp();
+		message.channel.send(embed);
 	}
-	embed.setTimestamp();
-	message.channel.send(embed);
+	
 }
 
 function musicHelp(message){
