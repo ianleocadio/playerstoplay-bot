@@ -1,4 +1,6 @@
 const Discord = require("discord.js");
+const auth = require('../auth/auth.js');
+
 const ytSearch = require('youtube-search');
 const YTDL = require("ytdl-core");
 //Global music queue
@@ -8,56 +10,74 @@ var server = {
 
 
 function musicCommands(message, bot){
-	var musicCommand = message.content.split(" ");
-	if(!musicCommand[1]){
+	var commandArguments = message.content.toLowerCase().split(" ");
+	var command = commandArguments[1];
+
+	if(!command){
 		musicHelp(message);
 	}else
 
-	if(musicCommand[1].toLowerCase() === "play"){
-		play(message);
+	if(command === "play" || command === "p"){
+
+		if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www"))
+			play(message, commandArguments[2]);
+		else{
+			var opts = {
+				maxResults: 10,
+				key: (auth.yt_key || process.env.YT_KEY)
+			}
+			var query = "";
+			commandArguments.shift();
+			commandArguments.shift();
+			commandArguments.map(function(t){
+				query += t + " ";
+			});
+			ytSearch(query, opts, function(error, results){
+				if(error) return console.log(error);
+
+				play(message, results[0].link);
+			});
+		}
+
 	}else 
 	
-
-	if(musicCommand[1].toLowerCase() === "skip"){
+	if(command === "skip"){
 		if (server.dispatcher) server.dispatcher.end();
 	}else
 	
-	if(musicCommand[1].toLowerCase() === "stop"){
+	if(command === "stop"){
 		if(message.guild.voiceConnection){
 			message.guild.voiceConnection.disconnect();
 		}
 	}
 
-	if(musicCommand[1].toLowerCase() === "playlist"){
+	if(command === "playlist" || command === "pl" || command === "queue" || command === "q"){
 		playlist(message);
 	}else
 
-	if(musicCommand[1].toLowerCase() === "playing"){
+	if(command === "playing"){
 		playing(message);
 	}else
 
-	if(musicCommand[1].toLowerCase() === "help"){
+	if(command === "help" || command === "h"){
 		musicHelp(message);
 	}else
 
-	if(musicCommand[1].toLowerCase() === "t"){ 
-		var opts = {
-			maxResults: 10,
-			key: 'AIzaSyB5Fgj9kmM3kz2j4IqLeROV1GpCax7MGVw'
-		}
-
-
-		ytSearch(musicCommand[2], opts, function(error, results){
-			if(error) return console.log(error);
-
-		});
+	if(command === "t"){ 
+		
 	}
 }
 
 
 
 
-//Auxiliary functions
+/******************************************************
+ *													  *
+ *													  *
+ *				Auxiliary's functions				  *
+ *													  *
+ *													  *
+ ******************************************************/
 function playMusic(connection, message){
 	server.dispatcher = connection.playStream(YTDL.downloadFromInfo(server.queue[0], {filter: "audioonly"}));
 
@@ -68,16 +88,22 @@ function playMusic(connection, message){
 	});
 }
 
-//Command functions
-function play(message){
+/******************************************************
+ *													  *
+ *													  *
+ *				Command's functions					  *
+ *													  *
+ *													  *
+ ******************************************************/
+function play(message, searchParam){
 	if(!message.member.voiceChannel){
 			message.channel.sendMessage("Você precisa estar em um canal de voz para utilizar este comando!");
 			return;
-		}else if(!musicCommand[2])
-			message.reply("É preciso informar o link da música :wink:");
+		}else if(!searchParam)
+			message.reply("É preciso informar o link ou nome da música :wink:");
 		//1
 
-		YTDL.getInfo(musicCommand[2])
+		YTDL.getInfo(searchParam)
 			.then(function(info){
 
 				server.queue.push(info);
@@ -147,7 +173,6 @@ function playing(message){
 	message.channel.send(embed);
 }
 
-
 function musicHelp(message){
 	var title = "Lista de comandos /music:"
 	var embed = new Discord.RichEmbed()
@@ -173,7 +198,13 @@ function musicHelp(message){
 	message.author.send(embed);
 } 
 
-
+/******************************************************
+ *													  *
+ *													  *
+ *						Exports 					  *
+ *													  *
+ *													  *
+ ******************************************************/
 module.exports = {
 	"musicCommands": musicCommands
 }
