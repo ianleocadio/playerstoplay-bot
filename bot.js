@@ -39,23 +39,11 @@ bot.on("message", message => {
 
 
 		if(message.content.startsWith("/music")){
-			Commands.Music.musicCommands(message);
+			Commands.Music.musicCommands(message, bot);
 			return;
 		}
 
-		if(message.content.startsWith("/teste")){
-			
-
-			var embed = new Discord.RichEmbed()
-				.addField("T Teste1", "D teste", true)
-				.addField("T Teste1", "D teste", true)
-				.addField("T Teste1", "D teste")
-				.setColor("GREEN");
-
-			message.channel.sendEmbed(embed);
-
-			return;
-		}
+		
 
 		//Comandos...
 
