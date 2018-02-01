@@ -30,7 +30,7 @@ bot.on("message", message => {
 	
 
 	if(message.content.startsWith("/")){
-		if(message.content.startsWith("/help")){
+		if(message.content.startsWith("/help") || message.content.startsWith("/h")){
 			Commands.Help.listHelp(message);
 			return;
 		}
@@ -42,7 +42,7 @@ bot.on("message", message => {
 
 
 
-		if(message.content.startsWith("/music")){
+		if(message.content.startsWith("/music") message.content.startsWith("/m")){
 			Commands.Music.musicCommands(message, bot);
 			return;
 		}

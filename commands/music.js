@@ -61,10 +61,6 @@ function musicCommands(message, bot){
 
 	if(command === "help" || command === "h"){
 		musicHelp(message);
-	}else
-
-	if(command === "t"){ 
-		
 	}
 }
 
