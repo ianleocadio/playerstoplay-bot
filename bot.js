@@ -29,20 +29,20 @@ bot.on('guildMemberAdd', member => {
 bot.on("message", message => {
 	
 
-	if(message.content.startsWith("/")){
-		if(message.content.startsWith("/help") || message.content.startsWith("/h")){
+	if(message.content.startsWith("!")){
+		if(message.content.startsWith("!help") || message.content.startsWith("!h")){
 			Commands.Help.listHelp(message);
 			return;
 		}
 
-		if(message.content.startsWith("/add")){
+		if(message.content.startsWith("!add")){
 			Commands.Roles.addPlayerRole(message);
 			return;
 		}
 
 
 
-		if(message.content.startsWith("/music") || message.content.startsWith("/m")){
+		if(message.content.startsWith("!music") || message.content.startsWith("!m")){
 			Commands.Music.musicCommands(message, bot);
 			return;
 		}
