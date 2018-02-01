@@ -42,7 +42,7 @@ bot.on("message", message => {
 
 
 
-		if(message.content.startsWith("/music") message.content.startsWith("/m")){
+		if(message.content.startsWith("/music") || message.content.startsWith("/m")){
 			Commands.Music.musicCommands(message, bot);
 			return;
 		}
