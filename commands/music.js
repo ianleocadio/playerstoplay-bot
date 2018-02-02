@@ -21,7 +21,7 @@ function commands(message, bot){
 
 		if(commandArguments[2]){
 			if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www")){
-				play(message, commandArguments[2]);
+				musicPermissions.call(message, play, message, commandArguments[2]);
 			}else{
 				var opts = {
 					maxResults: 10,
@@ -36,48 +36,50 @@ function commands(message, bot){
 				ytSearch(query, opts, function(error, results){
 					if(error) return console.log(error);
 
-					play(message, results[0].link);
+					musicPermissions.call(message, play, message, results[0].link);
 				});
 			}
 		}else{
 			if (server.dispatcher){
 				if(server.dispatcher.paused)
-					resume();
+					musicPermissions.call(message, resume);
 				else
-					pause(); 
+					musicPermissions.call(message, pause);
 			}
 		}
 
 	}else 
 	
 	if(command === "skip"){
-		end();
+		musicPermissions.call(message, end());
 	}else
 	
 	if(command === "stop"){
-		if(message.guild.voiceConnection){
-			message.guild.voiceConnection.disconnect();
-		}
+		musicPermissions.call(message, stop, message);
 	}else
 
 	if(command === "pause"){
-		pause();
+		musicPermissions.call(message, pause);
 	}else
 
 	if(command === "resume" || command === "r"){
-		resume();
+		musicPermissions.call(message, resume);
 	}else
 
 	if(command === "playlist" || command === "pl" || command === "queue" || command === "q"){
-		playlist(message);
+		musicPermissions.call(message, playlist, message);
 	}else
 
 	if(command === "playing" || command === "now"){
-		playing(message);
+		musicPermissions.call(message, playing, message);
 	}else
 
 	if(command === "help" || command === "h"){
-		musicHelp(message);
+		musicPermissions.call(message, musicHelp, message);
+	}else
+
+	if(command === "perm"){
+		musicPermissions.commands(message);
 	}
 }
 
@@ -214,6 +216,12 @@ function playlist(message){
 	message.channel.send(embed);
 }
 
+function stop(message){
+	if(message.guild.voiceConnection){
+		message.guild.voiceConnection.disconnect();
+	}
+}
+
 function playing(message){
 	if(server.queue.length >  0){
 		var musicInfo = server.queue[0];
@@ -263,6 +271,26 @@ function resume(){
 function end(){
 	if (server.dispatcher) server.dispatcher.end();
 }
+/******************************************************
+ *													  *
+ *													  *
+ *						Permissions					  *
+ *													  *
+ *													  *
+ ******************************************************/
+const Utils = require("../util/utils.js");
+const Permissions = require("../config/permissions.js");
+var functions = [
+	play,
+	playlist,
+	playing,
+	musicHelp,
+	pause,
+	resume,
+	end
+];
+var musicPermissions = new Permissions(Utils.createListOfPermissions(functions));
+
 
 /******************************************************
  *													  *
