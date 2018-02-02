@@ -32,17 +32,23 @@ function setTextChannel(message, commandArguments){
 
 	try{
 		textChannel = message.guild.channels.find('name', textChannel, 'type', 'text');
-	}catch(e){
-		return message.reply("Esse chat não existe!"); 
-	}
-		
-	BOT_CONFIG.textChannel = textChannel;
 
-	message.channel.send(
-	configInfo().addField("Chat padrão", "Comandos do bot só poderão ser\nrealizados no chat: **<#"+textChannel.id+">**", true)
-				.addBlankField(true)
-				.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
-	);
+		BOT_CONFIG.textChannel = textChannel;
+
+		message.channel.send(
+		configInfo().addField("Chat padrão", "Comandos do bot só poderão ser\nrealizados no chat: **<#"+textChannel.id+">**", true)
+					.addBlankField(true)
+					.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
+		);
+
+	}catch(e){
+		message.reply("Informe um chat existente para adicionar nas configurações"); 
+		return;
+	}
+
+
+		
+	
 }
 
 function setVoiceChannel(message, commandArguments){
@@ -50,17 +56,21 @@ function setVoiceChannel(message, commandArguments){
 
 	try{
 		voiceChannel = message.guild.channels.find('name', voiceChannel, 'type', 'voice');
+
+		BOT_CONFIG.voiceChannel = voiceChannel;
+
+		message.channel.send(
+		configInfo().addField("Canal de voz padrão", "O bot só pode entrar no canal de voz: **<#"+voiceChannel.id+">**", true)
+					.addBlankField(true)
+					.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
+		);
+
 	}catch(e){
-		return message.reply("Esse canal não existe!"); 
+		message.reply("Esse canal não existe!"); 
+		return;
 	}
 		
-	BOT_CONFIG.voiceChannel = voiceChannel;
-
-	message.channel.send(
-	configInfo().addField("Canal de voz padrão", "O bot só pode entrar no canal de voz: **<#"+voiceChannel.id+">**", true)
-				.addBlankField(true)
-				.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
-	);
+	
 }
 
 function configInfo(){
