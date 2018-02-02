@@ -4,11 +4,11 @@ var BOT_CONFIG = require("./bot_config.js");
 
 function commands(message){
 	var commandArguments = message.content.match(/\S+/g);
-	var command = commandArguments[1].toLowerCase();
+	var command = (commandArguments[1] || "").toLowerCase();
 	
-	if(!command){
-		return;
-	}
+	if(!commandArguments[1]){
+		showConfigInfo(message);
+	}else
 
 	if(command === "textchannel" || command === "tc"){
 		setTextChannel(message, commandArguments);
@@ -27,6 +27,16 @@ function commands(message){
  *													  *
  *													  *
  ******************************************************/
+function showConfigInfo(message){
+	var embed = new Discord.RichEmbed();
+	embed.setAuthor("Configurações atuais:")
+		 .setColor("RED")
+		 .addField("Chat padrão", (BOT_CONFIG.textChannel) ? "<#"+BOT_CONFIG.textChannel.id+">" : "Não definido", true)
+		 .addField("Canal de voz padrão", (BOT_CONFIG.voiceChannel) ? "<#"+BOT_CONFIG.voiceChannel.id+">" : "Não definido", true);
+	message.channel.send(embed);
+}
+
+
 function setTextChannel(message, commandArguments){
 	var textChannel = commandArguments[2];
 
@@ -36,8 +46,7 @@ function setTextChannel(message, commandArguments){
 		BOT_CONFIG.textChannel = textChannel;
 
 		message.channel.send(
-		configInfo().addField("Chat padrão", "Comandos do bot só poderão ser\nrealizados no chat: **<#"+textChannel.id+">**", true)
-					.addBlankField(true)
+		configInfo().addField("Chat padrão", "Comandos do bot só poderão ser realizados no chat: **<#"+textChannel.id+">**", true)
 					.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
 		);
 
@@ -57,7 +66,6 @@ function setVoiceChannel(message, commandArguments){
 
 		message.channel.send(
 		configInfo().addField("Canal de voz padrão", "O bot só pode entrar no canal de voz: **<#"+voiceChannel.id+">**", true)
-					.addBlankField(true)
 					.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
 		);
 

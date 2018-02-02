@@ -52,7 +52,8 @@ bot.on("message", message => {
 		if(commands[0] === ".config" || commands[0] === ".c"){
 			Commands.Config.commands(message);
 			return;
-		}
+		}else
+
 		if(commands[0] === ".clear" || commands[0] === ".clean"){
 			var limit = (commands[1] || 50);
 			message.channel.fetchMessages({"limit": limit})
