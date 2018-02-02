@@ -9,7 +9,7 @@ var server = {
 };
 
 
-function musicCommands(message, bot){
+function commands(message, bot){
 	var commandArguments = message.content.toLowerCase().match(/\S+/g);
 	var command = commandArguments[1];
 
@@ -41,13 +41,10 @@ function musicCommands(message, bot){
 			}
 		}else{
 			if (server.dispatcher){
-				server.dispatcher.on("speaking", function(speaking){
-					if(speaking){
-						pause();
-					}else{
-						resume();
-					}
-				});
+				if(server.dispatcher.paused)
+					resume();
+				else
+					pause(); 
 			}
 		}
 
@@ -67,7 +64,7 @@ function musicCommands(message, bot){
 		pause();
 	}else
 
-	if(command === "resume"){
+	if(command === "resume" || command === "r"){
 		resume();
 	}else
 
@@ -75,7 +72,7 @@ function musicCommands(message, bot){
 		playlist(message);
 	}else
 
-	if(command === "playing"){
+	if(command === "playing" || command === "now"){
 		playing(message);
 	}else
 
@@ -275,5 +272,5 @@ function end(){
  *													  *
  ******************************************************/
 module.exports = {
-	"musicCommands": musicCommands
+	"commands": commands
 }
