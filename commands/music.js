@@ -283,6 +283,7 @@ const Permissions = require("../config/permissions.js");
 var functions = [
 	play,
 	playlist,
+	stop,
 	playing,
 	musicHelp,
 	pause,
