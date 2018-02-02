@@ -45,10 +45,6 @@ function setTextChannel(message, commandArguments){
 		message.reply("Informe um chat existente para adicionar nas configurações"); 
 		return;
 	}
-
-
-		
-	
 }
 
 function setVoiceChannel(message, commandArguments){
@@ -69,8 +65,6 @@ function setVoiceChannel(message, commandArguments){
 		message.reply("Esse canal não existe!"); 
 		return;
 	}
-		
-	
 }
 
 function configInfo(){
