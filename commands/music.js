@@ -51,7 +51,7 @@ function commands(message, bot){
 	}else 
 	
 	if(command === "skip"){
-		musicPermissions.call(message, end());
+		musicPermissions.call(message, end);
 	}else
 	
 	if(command === "stop"){
@@ -159,12 +159,13 @@ function play(message, searchParam){
 		YTDL.getInfo(searchParam)
 			.then(function(info){
 
-				queuePosition = server.queue.push({
+				var queueObject = {
 					"info": info,
 					"requested_by": message.author
-				});
-				playInfo(message, server.queue[0], queuePosition, "Música adicionada!");
-
+				};
+				queuePosition = server.queue.push(queueObject);
+				playInfo(message, queueObject, queuePosition, "Música adicionada!");
+				
 				if(!message.guild.voiceConnection){
 					message.member.voiceChannel.join()
 						.then(function(connection){
@@ -189,17 +190,18 @@ function playlist(message){
 			if(i == 0){
 				embed.setDescription("**Now playing:**")
 				 	 .addField(musicInfo.title, "("+formatedVideoTime+")", true)
-				 	 .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
+				 	 .addField("Pedido por", object.requested_by.toString(), true)
+				 	 .addBlankField()
 				 	 .setThumbnail(musicInfo.thumbnail_url)
 				 	 .setURL(musicInfo.video_url)
 				 	 .setAuthor("Playlist: ");
 			}else{
-				embed.addBlankField()
+				embed
+					// .addBlankField()
 				 	 .addField((i+1)+" - "+musicInfo.title, "("+formatedVideoTime+")", true)
-				 	 .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
+				 	 // .addBlankField(true)
+				 	 // .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
 			}
-
-			
 			/*
 				title
 				video_url
@@ -212,7 +214,6 @@ function playlist(message){
 		embed.setAuthor("Playlist: ")
 			 .setDescription("**Nenhuma música na playlist**");
 	}
-	embed.setTimestamp();
 	message.channel.send(embed);
 }
 

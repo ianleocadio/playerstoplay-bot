@@ -12,15 +12,15 @@ bot.on("ready", () => {
 	console.log("BOT Online");
 });
 
-bot.on('guildMemberAdd', member => {
-  // Send the message to a designated channel on a server:
-  const channel = member.guild.channels.find('name', 'lobby');
-  const players_role = member.guild.roles.find('name', 'Players');
-  // Do nothing if the channel wasn't found on this server
-  if (!channel) return;
-  // Send the message, mentioning the member
-  channel.send("Eai mano "+ member +" ? De boa ? Qualquer dúvida use /help ou chame um Mod!\n Ou "+players_role+" seus cuzões! Cara novo ai!");
-});
+// bot.on('guildMemberAdd', member => {
+//   // Send the message to a designated channel on a server:
+//   const channel = member.guild.channels.find('name', 'lobby');
+//   const players_role = member.guild.roles.find('name', 'Players');
+//   // Do nothing if the channel wasn't found on this server
+//   if (!channel) return;
+//   // Send the message, mentioning the member
+//   channel.send("Eai mano "+ member +" ? De boa ? Qualquer dúvida use /help ou chame um Mod!\n Ou "+players_role+" seus cuzões! Cara novo ai!");
+// });
 
 bot.on("message", message => {
 	var commands = message.content.toLowerCase().match(/\S+/g);
@@ -64,6 +64,20 @@ bot.on("message", message => {
 					console.log(error);
 					return;	
 				});
+			return;
+		}else
+
+		if(commands[0] === ".t"){
+			var embed = new Discord.RichEmbed()
+									.setAuthor("Teste 1")
+									.addField("Title teste 1", "Desc teste 1", true)
+									.addField("Title 2 teste 1", "Desc 2 teste 1", true);
+			var embed2 = new Discord.RichEmbed()
+									.setAuthor("Teste 2")
+									.addField("Title teste 2", "Desc teste 2", true)
+									.addField("Title 2 teste 2", "Desc 2 teste 2", true);
+
+			message.channel.send(embed);
 			return;
 		}
 		//Comandos...
