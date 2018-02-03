@@ -38,7 +38,7 @@ bot.on("message", message => {
 		}
 
 		if(commands[0] === ".help" || commands[0] === ".h"){
-			Commands.Help.listHelp(message);
+			// Commands.Help.listHelp(message);
 			return;
 		}else
 		if(commands[0] === ".add"){

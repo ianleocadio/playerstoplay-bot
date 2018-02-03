@@ -154,6 +154,11 @@ class Permissions{
  *													  *
  ******************************************************/
 
+/**
+ * Return a custom rich embed
+ *
+ * @returns {RichEmbed} - [Doc]{@link https://discord.js.org/#/docs/main/stable/class/RichEmbed}
+ */
 function permInfo(){
 	return new Discord.RichEmbed()
 		.setColor("RED")
@@ -167,6 +172,16 @@ function permInfo(){
  *													  *
  *													  *
  ******************************************************/
+/**
+ * Implementation of addRole command's function
+ *
+ * @param {Permission} permObject - Instace of permission object
+ * @param {Message} message - [Doc]{@link https://discord.js.org/#/docs/main/stable/class/Message}
+ * @param {Array} commandArguments - Array of extra argumets provide to command
+ * @param {String} functionName - Name of command's funciton name
+ *
+ * @returns
+ */
 function addRoles(permObject, message, commandArguments, functionName){
 	if(!commandArguments[2]){
 		message.reply("");
@@ -202,7 +217,16 @@ function addRoles(permObject, message, commandArguments, functionName){
 		message.channel.send(embed);
 	}
 }
-
+/**
+ * Implementation of addCommand command's function
+ *
+ * @param {Permission} permObject - Instace of permission object
+ * @param {Message} message - [Doc]{@link https://discord.js.org/#/docs/main/stable/class/Message}
+ * @param {Array} commandArguments - Array of extra argumets provide to command
+ * @param {String} roleName - Role's name
+ *
+ * @returns
+ */
 function addCommands(permObject, message, commandArguments, roleName){
 	var auxCommandArguments = Array.prototype.slice.call(commandArguments, 4);
 	if(auxCommandArguments.length == 0){
