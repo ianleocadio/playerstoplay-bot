@@ -1,8 +1,10 @@
 const Discord = require("discord.js");
 const auth = require('../auth/auth.js');
+const Utils = require("../util/utils.js");
 
 const ytSearch = require('youtube-search');
 const YTDL = require("ytdl-core");
+const ytPlaylist = require('youtube-playlist-info');
 //Global music queue
 var server = {
 	"queue": []
@@ -10,8 +12,8 @@ var server = {
 
 
 function commands(message, bot){
-	var commandArguments = message.content.toLowerCase().match(/\S+/g);
-	var command = commandArguments[1];
+	var commandArguments = message.content.match(/\S+/g);
+	var command = commandArguments[1].toLowerCase();
 
 	if(!command){
 		musicHelp(message);
@@ -20,66 +22,48 @@ function commands(message, bot){
 	if(command === "play" || command === "p"){
 
 		if(commandArguments[2]){
-			if(commandArguments[2].startsWith("https://") || commandArguments[2].startsWith("http://") || commandArguments[2].startsWith("www")){
-				musicPermissions.call(message, play, message, commandArguments[2]);
-			}else{
-				var opts = {
-					maxResults: 10,
-					key: (auth.yt_key || process.env.YT_KEY)
-				}
-				var query = "";
-				commandArguments.shift();
-				commandArguments.shift();
-				commandArguments.map(function(t){
-					query += t + " ";
-				});
-				ytSearch(query, opts, function(error, results){
-					if(error) return console.log(error);
-
-					musicPermissions.call(message, play, message, results[0].link);
-				});
-			}
+			MusicPermissions.call(message, play, message, commandArguments);
 		}else{
 			if (server.dispatcher){
 				if(server.dispatcher.paused)
-					musicPermissions.call(message, resume);
+					MusicPermissions.call(message, resume);
 				else
-					musicPermissions.call(message, pause);
+					MusicPermissions.call(message, pause);
 			}
 		}
 
 	}else 
 	
 	if(command === "skip"){
-		musicPermissions.call(message, end);
+		MusicPermissions.call(message, end);
 	}else
 	
 	if(command === "stop"){
-		musicPermissions.call(message, stop, message);
+		MusicPermissions.call(message, stop, message);
 	}else
 
 	if(command === "pause"){
-		musicPermissions.call(message, pause);
+		MusicPermissions.call(message, pause);
 	}else
 
 	if(command === "resume" || command === "r"){
-		musicPermissions.call(message, resume);
+		MusicPermissions.call(message, resume);
 	}else
 
 	if(command === "playlist" || command === "pl" || command === "queue" || command === "q"){
-		musicPermissions.call(message, playlist, message);
+		MusicPermissions.call(message, playlist, message);
 	}else
 
 	if(command === "playing" || command === "now"){
-		musicPermissions.call(message, playing, message);
+		MusicPermissions.call(message, playing, message);
 	}else
 
 	if(command === "help" || command === "h"){
-		musicPermissions.call(message, musicHelp, message);
+		MusicPermissions.call(message, musicHelp, message);
 	}else
 
 	if(command === "perm"){
-		musicPermissions.commands(message);
+		MusicPermissions.commands(message);
 	}
 }
 
@@ -93,6 +77,7 @@ function commands(message, bot){
  *													  *
  *													  *
  ******************************************************/
+
 function formateTime(timeString){
 	var hourString,minString, secString;
 
@@ -115,7 +100,7 @@ function formateTime(timeString){
 }
 
 function playMusic(connection, message){
-	server.dispatcher = connection.playStream(YTDL.downloadFromInfo(server.queue[0].info, {filter: "audioonly"}));
+	server.dispatcher = connection.playStream(YTDL.downloadFromInfo(server.queue[0].info, {filter: "audioonly", quality: "highestaudio"}));
 
 	server.dispatcher.on("end", function(){
 		server.queue.shift();
@@ -124,7 +109,7 @@ function playMusic(connection, message){
 	});
 }
 
-function playInfo(message, queueObject, queuePosition, title){
+function sendPlayInfo(message, queueObject, queuePosition, title){
 	var embed = new Discord.RichEmbed()
 			.setColor("GREEN");
 	var musicInfo = queueObject.info;
@@ -133,12 +118,56 @@ function playInfo(message, queueObject, queuePosition, title){
 	embed.setDescription("**"+musicInfo.title+"**")
 		 .setAuthor(title)
 		 .addField("Duração", formatedVideoTime, true)
-		 .addField("Pedido por", queueObject.requested_by.username+"#"+queueObject.requested_by.discriminator, true)
+		 .addField("Pedido por", queueObject.requested_by.toString(), true)
 		 .addField("Posição na fila", (queuePosition == 1) ? "Tocando" : queuePosition, true)
 	 	 .setThumbnail(musicInfo.thumbnail_url)
 	 	 .setURL(musicInfo.video_url);
 			
 	message.channel.send(embed);
+}
+
+function getPlayInfo(message, searchParam, showInfo){
+	if(!message.member.voiceChannel){
+		message.channel.sendMessage("Você precisa estar em um canal de voz para utilizar este comando!");
+		return;
+	}else if(!searchParam)
+		message.reply("É preciso informar o link ou nome da música :wink:");
+	//1
+
+	YTDL.getInfo(searchParam)
+		.then(function(info){
+
+			var queueObject = {
+				"info": info,
+				"requested_by": message.author
+			};
+			queuePosition = server.queue.push(queueObject);
+			if(showInfo || typeof(showInfo) === "undefined")
+				sendPlayInfo(message, queueObject, queuePosition, "Música adicionada!");
+			
+			if(!message.guild.voiceConnection){
+				message.member.voiceChannel.join()
+					.then(function(connection){
+						playMusic(connection, message);
+					});
+			}
+		},
+		function(error){
+			if (error) throw error;
+		}
+	);
+}
+
+function getPlaylist(message, playListId){
+	const options = {
+	  maxResults: 20
+	};
+	ytPlaylist((auth.yt_key || process.env.YT_KEY), playListId, options)
+		.then(items => {
+		  items.map(function(item, i){
+		  	getPlayInfo(message, item.resourceId.videoId, false);
+		  });
+		}).catch(console.error);
 }
 
 /******************************************************
@@ -148,35 +177,39 @@ function playInfo(message, queueObject, queuePosition, title){
  *													  *
  *													  *
  ******************************************************/
-function play(message, searchParam){
-	if(!message.member.voiceChannel){
-			message.channel.sendMessage("Você precisa estar em um canal de voz para utilizar este comando!");
-			return;
-		}else if(!searchParam)
-			message.reply("É preciso informar o link ou nome da música :wink:");
-		//1
+function play(message, searchParams){
 
-		YTDL.getInfo(searchParam)
-			.then(function(info){
+	if(YTDL.validateURL(searchParams[2])){
+		var url = searchParams[2];
 
-				var queueObject = {
-					"info": info,
-					"requested_by": message.author
-				};
-				queuePosition = server.queue.push(queueObject);
-				playInfo(message, queueObject, queuePosition, "Música adicionada!");
-				
-				if(!message.guild.voiceConnection){
-					message.member.voiceChannel.join()
-						.then(function(connection){
-							playMusic(connection, message);
-						});
-				}
-			},
-			function(error){
-				if (error) throw error;
-			}
-		);
+		if(url.includes("list=")){
+	    	url = url.split("list=")[1];
+	        if(url.includes("&t="))
+	        	url = url.split("&t=")[0];
+
+	        getPlaylist(message, url);
+	     }else{
+	     	getPlayInfo(message, url);
+	     }
+
+
+	}else{
+		var opts = {
+			maxResults: 10,
+			key: (auth.yt_key || process.env.YT_KEY)
+		}
+		var query = "";
+
+		searchParams = Array.prototype.slice.call(searchParams, 2);
+		searchParams.map(function(t){
+			query += t + " ";
+		});
+		ytSearch(query, opts, function(error, results){
+			if(error) return console.log(error);
+
+			getPlayInfo(message, results[0].link);
+		});
+	}
 }
 
 function playlist(message){
@@ -198,7 +231,7 @@ function playlist(message){
 			}else{
 				embed
 					// .addBlankField()
-				 	 .addField((i+1)+" - "+musicInfo.title, "("+formatedVideoTime+")", true)
+				 	 .addField((i+1)+" - "+musicInfo.title, "("+formatedVideoTime+")")
 				 	 // .addBlankField(true)
 				 	 // .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
 			}
@@ -226,7 +259,7 @@ function stop(message){
 function playing(message){
 	if(server.queue.length >  0){
 		var musicInfo = server.queue[0];
-		playInfo(message, musicInfo, 1, "Tocando agora:");
+		sendPlayInfo(message, musicInfo, 1, "Tocando agora:");
 	}else{
 		var embed = new Discord.RichEmbed()
 			.setColor("GREEN");
@@ -279,7 +312,6 @@ function end(){
  *													  *
  *													  *
  ******************************************************/
-const Utils = require("../util/utils.js");
 const Permissions = require("../config/permissions.js");
 var functions = [
 	play,
@@ -291,7 +323,7 @@ var functions = [
 	resume,
 	end
 ];
-var musicPermissions = new Permissions(Utils.createListOfPermissions(functions));
+var MusicPermissions = new Permissions(Utils.createListOfPermissions(functions));
 
 
 /******************************************************

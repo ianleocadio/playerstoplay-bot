@@ -68,16 +68,6 @@ bot.on("message", message => {
 		}else
 
 		if(commands[0] === ".t"){
-			var embed = new Discord.RichEmbed()
-									.setAuthor("Teste 1")
-									.addField("Title teste 1", "Desc teste 1", true)
-									.addField("Title 2 teste 1", "Desc 2 teste 1", true);
-			var embed2 = new Discord.RichEmbed()
-									.setAuthor("Teste 2")
-									.addField("Title teste 2", "Desc teste 2", true)
-									.addField("Title 2 teste 2", "Desc 2 teste 2", true);
-
-			message.channel.send(embed);
 			return;
 		}
 		//Comandos...
