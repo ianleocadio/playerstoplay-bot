@@ -13,7 +13,11 @@ var server = {
 
 function commands(message, bot){
 	var commandArguments = message.content.match(/\S+/g);
-	var command = commandArguments[1].toLowerCase();
+	try{
+		var command = commandArguments[1].toLowerCase();
+	}catch(e){
+		return;
+	}
 
 	if(!command){
 		musicHelp(message);

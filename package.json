@@ -12,6 +12,8 @@
     "discord.js": "^11.3.0",
     "nodemon": "^1.14.12",
     "opusscript": "0.0.6",
+    "sqlite3": "^3.1.13",
+    "uuid": "^3.2.1",
     "youtube-playlist-info": "^1.1.2",
     "youtube-search": "^1.0.10",
     "ytdl-core": "^0.20.0"

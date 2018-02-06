@@ -18,7 +18,14 @@ function httpGet(theUrl, callback){
     xmlHttp.send(null);
 }
 
+function uuid(){
+	const uuidv4 = require('uuid/v4');
+	return uuidv4();
+}
+
+
 module.exports = {
 	"createListOfPermissions": createListOfPermissions,
-	"httpGet": httpGet
+	"httpGet": httpGet,
+	"uuid": uuid
 }
