@@ -68,6 +68,38 @@ bot.on("message", message => {
 		}else
 
 		if(commands[0] === ".t"){
+			var customChannels = message.guild.channels.find('name', 'Salas personalizadas');
+			
+			if(commands[1] === "add"){
+				var name = Array.prototype.slice.call(commands, 2).toString();
+				name = name.replace(/,/g, " ");
+				var c = message.guild.channels.find('name', name);
+
+
+				message.guild.createChannel(name, 'voice')
+					.then(channel => {
+						// message.author.send("Canal criado com sucesso!");
+						channel.setParent(customChannels);
+
+					})
+					.catch(console.error);
+			}else
+
+			if(commands[1] === "remove"){
+				var name = Array.prototype.slice.call(commands, 2).toString();
+				name = name.replace(/,/g, " ");
+				var channel = message.guild.channels.find('name', name, 'type', 'voice', 'parentID', customChannels.id);
+
+				if(channel){
+					channel.delete()
+						.then(() => {
+							// message.author.send("Canal removido");
+						})
+						.catch(console.error);
+				}
+			}
+
+
 			return;
 		}
 		//Comandos...
