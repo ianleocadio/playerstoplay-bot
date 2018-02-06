@@ -40,9 +40,8 @@ function commands(message){
  *													  *
  *													  *
  ******************************************************/
-const Model = require("../model/models.js");
-var model = new Model();
-console.log(model);
+const Models = require("../model/models.js");
+var channelModel = new Models.Channel();
 
 /******************************************************
  *													  *
@@ -60,9 +59,17 @@ function add(message, commandArguments){
 	var channel = message.guild.channels.find('name', name);
 
 	if(channel){
-		console.log("Erro");
+		channelModel.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel.id], 
+		function(c, error){
+			if(error) return console.log(error);
+
+			message.author.send("Você já possui um canal personalizado no PlayersToPlay");		
+		});
 		return;
 	}
+
+
+
 
 	message.guild.createChannel(name, 'voice')
 		.then(channel => {
@@ -75,12 +82,13 @@ function add(message, commandArguments){
 			})
 			  .then(channel => {
 			  	channel.setParent(customChannels);
-			  	var u = Utils.uuid();
-			  	model.insert("CHANNELS", 
-			  		"ID, USER_ID, USER, CHANNEL_ID, CHANNEL, CREATED_AT",
-			  		[Utils.uuid(), message.author.id, message.author.username,
-			  		channel.id, channel.name, Date.now()]);
+			  	channelModel.insert("ID, USER_ID, CHANNEL_ID, CREATED_AT",
+							  		[Utils.uuid(), message.author.id,
+							  		channel.id, Date.now()], function(error){
+							  			if (error) {
 
+							  			}
+							  		});
 			  })
 			  .catch(console.error);
 
@@ -99,6 +107,12 @@ function remove(message, commandArguments){
 		channel.delete()
 			.then(() => {
 				// message.author.send("Canal removido");
+				channelModel.delete("USER_ID, CHANNEL_ID",
+				  		[message.author.id, channel.id], function(error){
+							  			if (error) {
+							  				
+							  			}
+							  		});
 			})
 			.catch(console.error);
 	}

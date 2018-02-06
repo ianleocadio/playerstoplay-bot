@@ -1,5 +1,6 @@
 #Custom projects ignore files
 auth/auth.json
+.SQLITE3
 
 # Logs
 logs

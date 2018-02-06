@@ -1,24 +1,28 @@
 const db = require("./db/db.js");
 
 class Model{
-	constructor(){
+	constructor(table){
 		this.connection = db.connection;
+		this.table = table;
 	}
 
 
-	insert(table, props, values){
+	insert(props, values, cb){
 		const con = this.connection;
-		con.serialize(function(){
-			console.log(values, values.toString());
-			var s = ""
-			values.map(function(v, i){
-				console.log(i);
-				(values.length-1 != i) ? s+= "?," : s+="?";
+		const table = this.table;
+		try{
+			con.serialize(function(){
+				var s = ""
+				values.map(function(v, i){
+					(values.length-1 != i) ? s+= "?," : s+="?";
+				});
+				con.run("INSERT INTO "+table+"("+props+") VALUES ("+s+")", values);
 			});
-			console.log(s);
-
-			con.run("INSERT INTO "+table+"("+props+") VALUES ("+s+")", values);
-		});
+		}catch(e){
+			console.log(e);
+			cb(e);
+			return;
+		}
 	}
 
 	// update(table, props, values){
@@ -30,8 +34,105 @@ class Model{
 	// 		stmt.finalize();
 	// 	});
 	// }
+
+	delete(props, values, cb){
+		const con = this.connection;
+		const table = this.table;
+		try{
+			props = formatProps(props, values);
+
+
+			con.serialize(function(){
+				con.run("DELETE FROM "+table+" WHERE "+props);
+			});
+
+		}catch(e){
+			console.log(e);
+			cb(e);
+			return;
+		}
+		
+	}
+
+
+	findOne(props, values, cb){
+		const con = this.connection;
+		const table = this.table;
+
+		try{
+			props = formatProps(props, values);
+
+			con.serialize(function(){
+				con.get("SELECT * FROM "+table+" WHERE "+props, function(error, row){
+					cb(row, undefined);
+				});
+			});
+
+		}catch(e){
+			console.log(e);
+			cb(undefined, error);
+			return;
+		}
+	}
 }
-module.exports = Model;
+/******************************************************
+ *													  *
+ *													  *
+ *				Auxiliary's functions				  *
+ *													  *
+ *													  *
+ ******************************************************/
+function formatProps(props, values){
+	props = props.match(/\S+/g);;
+	props = props.map((p, i) => {
+		p = p.replace(",", ""); 
+		return p+="="+values[i];
+	});
+	return props.toString().replace(/,/g, " and ");
+}
+
+/******************************************************
+ *													  *
+ *													  *
+ *					 Classes						  *
+ *													  *
+ *													  *
+ ******************************************************/
+class Channel extends Model{
+	constructor(){
+		super("CHANNELS");
+	}
+
+	userChannels(userId, cb){
+		var con = this.connection;
+		var table = this.table;
+		var channels = [];
+		con.serialize(function(){
+			con.each("SELECT * FROM "+table+" WHERE USER_ID=?", userId, function(error, row){
+				if(error){
+					cb(undefined, error);
+					return;
+				}
+
+				channels.push(row);
+			});
+			cb(channels, undefined);
+		});
+	}
+}
+
+
+/******************************************************
+ *													  *
+ *													  *
+ *					exports 	 					  *
+ *													  *
+ *													  *
+ ******************************************************/
+
+module.exports = {
+	"Channel": Channel
+};
 
 
 
