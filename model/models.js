@@ -1,5 +1,10 @@
 const db = require("./db/db.js");
 
+const ADMIN = '407703239765655557',
+	  MODS = '407966813029269504',
+	  PLAYERS = '407703850766696448';
+
+
 class Model{
 	constructor(table){
 		this.connection = db.connection;
@@ -109,14 +114,40 @@ class Channel extends Model{
 		var channels = [];
 		con.serialize(function(){
 			con.each("SELECT * FROM "+table+" WHERE USER_ID=?", userId, function(error, row){
-				if(error){
+				if(error) return;
+
+				channels.push(row);
+			}, function(error, length){
+				if (error) {
 					cb(undefined, error);
 					return;
 				}
-
-				channels.push(row);
+				cb(channels);
 			});
-			cb(channels, undefined);
+			
+		});
+	}
+
+	canCreate(message, cb){
+		var con = this.connection;
+		var table = this.table;
+		var highestRole = message.member.highestRole;
+		
+		if (highestRole.id === ADMIN || highestRole.id === MODS){
+			cb(true); 
+			return;
+		}
+
+		if (highestRole.id !== PLAYERS){
+			cb(false); 
+			return;
+		}
+
+		this.userChannels(message.author.id, function(channels){
+			if(channels.length >= 1)
+				cb(false);
+			else
+				cb(true);
 		});
 	}
 }

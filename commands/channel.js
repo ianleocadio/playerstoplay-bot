@@ -56,44 +56,53 @@ function add(message, commandArguments){
 	var name = Array.prototype.slice.call(commandArguments, 2).toString();
 	name = name.replace(/,/g, " ");
 	
-	var channel = message.guild.channels.find('name', name);
 
-	if(channel){
-		channelModel.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel.id], 
-		function(c, error){
-			if(error) return console.log(error);
+	channelModel.canCreate(message, function(canCreate){
+		if(!canCreate){
+			message.author.send("Você já atingiu o limite máximo de canais personalizados");
+			return;
+		}
 
-			message.author.send("Você já possui um canal personalizado no PlayersToPlay");		
-		});
-		return;
-	}
+		var channel = message.guild.channels.find('name', name);
 
+		if(channel){
+			channelModel.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel.id], 
+			function(c, error){
+				if(error) return console.log(error);
 
+				message.author.send("Você já possui um canal personalizado no PlayersToPlay com este nome");		
+			});
+			return;
+		}
 
+		message.guild.createChannel(name, 'voice')
+			.then(channel => {
+				// message.author.send("Canal criado com sucesso!");
+				channel.overwritePermissions(message.author, {
+				  MANAGE_CHANNELS: true,
+				  KICK_MEMBERS: true,
+				  MUTE_MEMBERS: true,
+				  CREATE_INSTANT_INVITE: true
+				})
+				  .then(channel => {
+				  	channel.setParent(customChannels);
+				  	channelModel.insert("ID, USER_ID, CHANNEL_ID, CREATED_AT",
+								  		[Utils.uuid(), message.author.id,
+								  		channel.id, Date.now()], function(error){
+								  			if (error) {
 
-	message.guild.createChannel(name, 'voice')
-		.then(channel => {
-			// message.author.send("Canal criado com sucesso!");
-			channel.overwritePermissions(message.author, {
-			  MANAGE_CHANNELS: true,
-			  KICK_MEMBERS: true,
-			  MUTE_MEMBERS: true,
-			  CREATE_INSTANT_INVITE: true
+								  			}
+								  		});
+				  })
+				  .catch(console.error);
+
 			})
-			  .then(channel => {
-			  	channel.setParent(customChannels);
-			  	channelModel.insert("ID, USER_ID, CHANNEL_ID, CREATED_AT",
-							  		[Utils.uuid(), message.author.id,
-							  		channel.id, Date.now()], function(error){
-							  			if (error) {
+			.catch(console.error);
 
-							  			}
-							  		});
-			  })
-			  .catch(console.error);
+	});
 
-		})
-		.catch(console.error);
+
+	
 
 }
 
