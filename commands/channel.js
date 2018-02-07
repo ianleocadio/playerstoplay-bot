@@ -21,7 +21,7 @@ function commands(message){
 		ChannelPermissions.call(message, add, message, commandArguments);
 	}else
 
-	if(command === "remove" || command === "rem"){
+	if(command === "remove" || command === "del"){
 		ChannelPermissions.call(message, remove, message, commandArguments);
 	}else
 
@@ -150,7 +150,16 @@ var functions = [
 ];
 var ChannelPermissions = new Permissions(Utils.createListOfPermissions(functions));
 
-
+/******************************************************
+ *													  *
+ *													  *
+ *						Bot functions    			  *
+ *													  *
+ *													  *
+ ******************************************************/
+ function deleteChannelFromDB(channel){
+ 	channelModel.delete("CHANNEL_ID", [channel.id]);
+ }
 /******************************************************
  *													  *
  *													  *
@@ -159,5 +168,6 @@ var ChannelPermissions = new Permissions(Utils.createListOfPermissions(functions
  *													  *
  ******************************************************/
 module.exports = {
-	"commands": commands
+	"commands": commands,
+	"deleteChannelFromDB": deleteChannelFromDB
 }

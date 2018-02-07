@@ -25,7 +25,8 @@ class Model{
 			});
 		}catch(e){
 			console.log(e);
-			cb(e);
+			if(cb)
+				cb(e);
 			return;
 		}
 	}
@@ -53,7 +54,8 @@ class Model{
 
 		}catch(e){
 			console.log(e);
-			cb(e);
+			if(cb)
+				cb(e);
 			return;
 		}
 		

@@ -1,17 +1,49 @@
-function listHelp(message){
-	message.author.send(helpText);
+const Discord = require("discord.js");
+const Utils = require("../util/utils.js");
+
+
+
+function commands(message){
+	var commandArguments = message.content.match(/\S+/g);
+	try{
+		var command = commandArguments[1].toLowerCase();
+	}catch(e){
+		HelpPermissions.call(message, help, message);
+		return;
+	}
+
 }
 
-var helpText =
-  "```Markdown\n"
-+ "# Lista de comandos:\n\n"
-+ "[1]: Adicionar membro ao cargo Player\n"
-+ "	   /add '@menções' (Ex: /add @Fulano @Pipitchu)\n\n"
-// + "[2]:"
-+ "```";
 
 
 
+/******************************************************
+ *													  *
+ *													  *
+ *				Auxiliary's functions				  *
+ *													  *
+ *													  *
+ ******************************************************/
+ var helpEmbed = new Discord.RichEmbed()
+				.setAuthor("Lista de comandos:")
+				.setColor("GREEN")
+				// .description("Commandos")
+				.addField("Música [ .music | .m <command> ]:", "play | p\nstop\npause | p\nresume | r\nplaylist | pl\nplaying | now", true)
+				.addField("Cargos:", ".add", true)
+				.addField("Canais [ .channel | .ch <command> ]:", "add | a\nremove | del", true);
+
+/******************************************************
+ *													  *
+ *													  *
+ *				Command's functions					  *
+ *													  *
+ *													  *
+ ******************************************************/
+
+
+function help(message){
+	message.author.send(helpEmbed);
+}
 
 function possibleCommand(message){
 	var cantExecuteHelpCommand = false;
@@ -40,9 +72,29 @@ function possibleCommand(message){
 		});
 	
 }
+/******************************************************
+ *													  *
+ *													  *
+ *						Permissions					  *
+ *													  *
+ *													  *
+ ******************************************************/
+const Permissions = require("../config/permissions.js");
+var functions = [
+	help,
+	possibleCommand
+];
+var HelpPermissions = new Permissions(Utils.createListOfPermissions(functions));
 
 
+/******************************************************
+ *													  *
+ *													  *
+ *						Exports 					  *
+ *													  *
+ *													  *
+ ******************************************************/
 module.exports = {
-	"listHelp": listHelp,
+	"commands": commands,
 	"possibleCommand": possibleCommand
 }

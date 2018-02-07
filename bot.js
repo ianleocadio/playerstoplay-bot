@@ -40,7 +40,7 @@ bot.on("message", message => {
 		}
 
 		if(commands[0] === ".help" || commands[0] === ".h"){
-			// Commands.Help.listHelp(message);
+			Commands.Help.commands(message);
 			return;
 		}else
 		if(commands[0] === ".add"){
@@ -80,6 +80,11 @@ bot.on("message", message => {
 
 	}
 
+});
+
+
+bot.on("channelDelete", channel => {
+	Commands.Channel.deleteChannelFromDB(channel);
 });
 
 bot.login(auth.token || process.env.BOT_TOKEN);
