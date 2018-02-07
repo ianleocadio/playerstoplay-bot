@@ -57,9 +57,9 @@ function add(message, commandArguments){
 	name = name.replace(/,/g, " ");
 	
 
-	channelModel.canCreate(message, function(canCreate){
+	channelModel.canCreate(message, function(canCreate, reason){
 		if(!canCreate){
-			message.author.send("Você já atingiu o limite máximo de canais personalizados");
+			message.author.send(reason);
 			return;
 		}
 
@@ -110,20 +110,28 @@ function remove(message, commandArguments){
 	var customChannels = message.guild.channels.find('name', 'Salas personalizadas');
 	var name = Array.prototype.slice.call(commandArguments, 2).toString();
 	name = name.replace(/,/g, " ");
-	var channel = message.guild.channels.find('name', name, 'type', 'voice', 'parentID', customChannels.id);
+	
+	var channel = message.guild.channels.find('name', name, 'type', 'voice', 'parentID', customChannels.id); 
 
 	if(channel){
-		channel.delete()
-			.then(() => {
-				// message.author.send("Canal removido");
-				channelModel.delete("USER_ID, CHANNEL_ID",
-				  		[message.author.id, channel.id], function(error){
-							  			if (error) {
-							  				
-							  			}
-							  		});
-			})
-			.catch(console.error);
+		channelModel.canRemove(message, channel.id, function(canRemove, reason){
+			if(!canRemove){
+				message.author.send(reason);
+				return;
+			}
+
+			channel.delete()
+				.then(() => {
+					// message.author.send("Canal removido");
+					channelModel.delete("USER_ID, CHANNEL_ID",
+					  		[message.author.id, channel.id], function(error){
+								  			if (error) {
+								  				
+								  			}
+								  		});
+				})
+				.catch(console.error);
+		});
 	}
 }
 

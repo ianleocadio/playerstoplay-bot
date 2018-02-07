@@ -129,8 +129,6 @@ class Channel extends Model{
 	}
 
 	canCreate(message, cb){
-		var con = this.connection;
-		var table = this.table;
 		var highestRole = message.member.highestRole;
 		
 		if (highestRole.id === ADMIN || highestRole.id === MODS){
@@ -139,16 +137,40 @@ class Channel extends Model{
 		}
 
 		if (highestRole.id !== PLAYERS){
-			cb(false); 
+			cb(false, "Você não possui o cargo Players! Peça para alguém que tenha ou a algum Mod"); 
 			return;
 		}
 
 		this.userChannels(message.author.id, function(channels){
 			if(channels.length >= 1)
-				cb(false);
+				cb(false, "Você já atingiu o limite máximo de canais personalizados");
 			else
 				cb(true);
 		});
+	}
+
+	canRemove(message, channel_id, cb){
+		var highestRole = message.member.highestRole;
+		
+		if (highestRole.id === ADMIN || highestRole.id === MODS){
+			cb(true); 
+			return;
+		}
+
+		if (highestRole.id !== PLAYERS){
+			cb(false, "Você não possui o cargo Players! Peça para alguém que tenha ou a algum Mod"); 
+			return;
+		}
+
+		this.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel_id], function(channel, error){
+			if(error) return console.log(error);
+
+			if(channel)
+				cb(true)
+			else
+				cb(false, "Este canal pertece a outro membro");
+		});
+		
 	}
 }
 
