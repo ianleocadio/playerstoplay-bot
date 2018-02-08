@@ -1,21 +1,22 @@
 const Discord = require("discord.js");
-var BOT_CONFIG = require("./bot_config.js");
+let BOT_CONFIG = require("./bot_config.js");
 
+const Utils = require("../util/utils.js");
 
 function commands(message){
-	var commandArguments = message.content.match(/\S+/g);
-	var command = (commandArguments[1] || "").toLowerCase();
+	let commandArguments = message.content.match(/\S+/g);
+	let command = (commandArguments[1] || "").toLowerCase();
 	
 	if(!commandArguments[1]){
-		showConfigInfo(message);
+	    ConfigPermissions.call(message, showConfigInfo, message);
 	}else
 
 	if(command === "textchannel" || command === "tc"){
-		setTextChannel(message, commandArguments);
+	    ConfigPermissions.call(message, setTextChannel, message, commandArguments);
 	}else
 
 	if(command === "voicechannel" || command === "vc"){
-		setVoiceChannel(message, commandArguments);
+	    ConfigPermissions.call(message, setVoiceChannel, message, commandArguments);
 	}
 
 }
@@ -28,59 +29,101 @@ function commands(message){
  *													  *
  ******************************************************/
 function showConfigInfo(message){
-	var embed = new Discord.RichEmbed();
+	let embed = new Discord.RichEmbed();
 	embed.setAuthor("Configurações atuais:")
-		 .setColor("RED")
-		 .addField("Chat padrão", (BOT_CONFIG.textChannel) ? "<#"+BOT_CONFIG.textChannel.id+">" : "Não definido", true)
-		 .addField("Canal de voz padrão", (BOT_CONFIG.voiceChannel) ? "<#"+BOT_CONFIG.voiceChannel.id+">" : "Não definido", true);
+		 .setColor("RED");
+	let textChannelStr = "\n";
+	BOT_CONFIG.textChannels.map(function(tc){
+	    textChannelStr += "**"+tc.toString()+"**\n";
+    });
+	let voiceChannelStr = "\n";
+	BOT_CONFIG.voiceChannels.map(function(vc){
+        voiceChannelStr += "**"+vc.toString()+"**\n";
+    });
+
+    embed.addField("Chats padrões", (BOT_CONFIG.textChannels.length > 0) ? textChannelStr : "Não definido", true)
+		 .addField("Canais de voz padrão", (BOT_CONFIG.voiceChannels > 0) ? voiceChannelStr : "Não definido", true);
+
 	message.channel.send(embed);
 }
 
+function configInfo(){
+    return new Discord.RichEmbed()
+        .setColor("RED")
+        .setAuthor("Configuração alterada:")
+}
 
 function setTextChannel(message, commandArguments){
-	var textChannel = commandArguments[2];
+	let textChannels = Array.prototype.slice.call(commandArguments, 2);
 
-	try{
-		textChannel = message.guild.channels.find('name', textChannel, 'type', 'text');
+    for(i=0; i < textChannels.length; i++){
+        let textChannel = message.guild.channels.find(function(tc){
+            return (tc.name === textChannels[i]) && (tc.type === "text");
+        });
+        if (textChannel){
+            if(!BOT_CONFIG.textChannels.includes(textChannel)){
+                BOT_CONFIG.textChannels.push(textChannel);
+            }else
+                return;
+        }
+    }
+    let embed = configInfo();
+    let canais = "\n";
+    BOT_CONFIG.textChannels.map(function(tc){
+        canais += "**"+tc.toString()+"**\n";
+    });
+    embed.addField("Chat padrão", "Comandos do bot só poderão ser realizados nos chats: "+canais, true)
+        .addField("Modificado por", message.author.toString(), false);
+    message.channel.send(embed);
 
-		BOT_CONFIG.textChannel = textChannel;
-
-		message.channel.send(
-		configInfo().addField("Chat padrão", "Comandos do bot só poderão ser realizados no chat: **<#"+textChannel.id+">**", true)
-					.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
-		);
-
-	}catch(e){
-		message.reply("Informe um chat existente para adicionar nas configurações"); 
-		return;
-	}
 }
 
 function setVoiceChannel(message, commandArguments){
-	var voiceChannel = commandArguments[2];
+    let voiceChannels = Array.prototype.slice.call(commandArguments, 2);
 
-	try{
-		voiceChannel = message.guild.channels.find('name', voiceChannel, 'type', 'voice');
-
-		BOT_CONFIG.voiceChannel = voiceChannel;
-
-		message.channel.send(
-		configInfo().addField("Canal de voz padrão", "O bot só pode entrar no canal de voz: **<#"+voiceChannel.id+">**", true)
-					.addField("Modificado por", message.author.username+"#"+message.author.discriminator, true)
-		);
-
-	}catch(e){
-		message.reply("Esse canal não existe!"); 
-		return;
-	}
+    for(i=0; i < voiceChannels.length; i++){
+        let voiceChannel = message.guild.channels.find(function(vc){
+            return (vc.name === voiceChannels[i]) && (vc.type === "voice");
+        });
+        if (voiceChannel){
+            console.log(voiceChannel.name +" - "+ voiceChannel.type);
+            if(!BOT_CONFIG.voiceChannels.includes(voiceChannel)){
+                BOT_CONFIG.voiceChannels.push(voiceChannel);
+            }else
+                return;
+        }
+    }
+    let embed = configInfo();
+    let canais = "\n";
+    BOT_CONFIG.voiceChannels.map(function(vc){
+        canais += "**"+vc.toString()+"**\n";
+    });
+    embed.addField("Chat padrão", "O bot só poderá entrar nos canais: "+canais, true)
+        .addField("Modificado por", message.author.toString(), false);
+    message.channel.send(embed);
 }
+/******************************************************
+ *													  *
+ *													  *
+ *						Permissions					  *
+ *													  *
+ *													  *
+ ******************************************************/
+const Permissions = require("../config/permissions.js");
+let functions = [
+    showConfigInfo,
+    setTextChannel,
+    setVoiceChannel
+];
+let ConfigPermissions = new Permissions(Utils.createListOfPermissions(functions));
 
-function configInfo(){
-	return new Discord.RichEmbed()
-			.setColor("RED")
-			.setAuthor("Configuração alterada:")
-}
-
+/******************************************************
+ *													  *
+ *													  *
+ *						Exports 					  *
+ *													  *
+ *													  *
+ ******************************************************/
 module.exports = {
 	"commands": commands
 }

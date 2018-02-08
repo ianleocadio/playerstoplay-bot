@@ -63,14 +63,16 @@ function add(message, commandArguments){
 			return;
 		}
 
-		var channel = message.guild.channels.find('name', name);
+		var channel = message.guild.channels.find(function(c){
+			return c.name === name && c.type === 'voice';
+		});
 
 		if(channel){
 			channelModel.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel.id], 
 			function(c, error){
 				if(error) return console.log(error);
-
-				message.author.send("Você já possui um canal personalizado no PlayersToPlay com este nome");		
+				if(c)
+					message.author.send("Você já possui um canal personalizado no PlayersToPlay com este nome");
 			});
 			return;
 		}

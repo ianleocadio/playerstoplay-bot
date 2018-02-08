@@ -25,7 +25,7 @@ bot.on("ready", () => {
 // });
 
 bot.on("message", message => {
-	var commands = message.content.toLowerCase().match(/\S+/g);
+	let commands = message.content.toLowerCase().match(/\S+/g);
 
 	//Verificando qual o comando e repassando a resposabilidade de execução
 	if(commands && commands[0].startsWith(".")){
@@ -33,8 +33,15 @@ bot.on("message", message => {
 		//Restrições
 		if(message.channel.type !== "text")
 			return;
-		if(BOT_CONFIG.textChannel && message.channel.id !== BOT_CONFIG.textChannel.id){
-			message.author.send("Os comandos deste bot só são permitidos no chat: **#"+ BOT_CONFIG.textChannel.name+"**");
+
+		if(!(auth.STAFF.has(message.member.highestRole.id))
+            &&
+		    BOT_CONFIG.textChannels.length > 0 && !BOT_CONFIG.textChannels.includes(message.channel)){
+            let str = "\n";
+			BOT_CONFIG.textChannels.map(function(tc){
+				str += "**"+tc.toString()+"**\n";
+			});
+			message.author.send("Os comandos deste bot só são permitidos nos chats: "+str);
 			message.delete();
 			return;
 		}
@@ -57,7 +64,7 @@ bot.on("message", message => {
 		}else
 
 		if(commands[0] === ".clear" || commands[0] === ".clean"){
-			var limit = (commands[1] || 50);
+			let limit = (commands[1] || 50);
 			message.channel.fetchMessages({"limit": limit})
 				.then(function(messages){
 					message.channel.bulkDelete(messages);

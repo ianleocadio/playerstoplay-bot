@@ -1,4 +1,4 @@
 module.exports = {
-	"textChannel": null,
-	"voiceChannel": null
+	"textChannels": [],
+	"voiceChannels": []
 }

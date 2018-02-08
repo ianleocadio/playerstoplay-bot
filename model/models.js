@@ -1,8 +1,9 @@
 const db = require("./db/db.js");
+const auth = require("../auth/auth.js");
 
-const ADMIN = '407703239765655557',
-	  MODS = '407966813029269504',
-	  PLAYERS = '407703850766696448';
+
+const STAFF = auth.STAFF,
+      MEMBERS = auth.MEMBERS;
 
 
 class Model{
@@ -17,7 +18,7 @@ class Model{
 		const table = this.table;
 		try{
 			con.serialize(function(){
-				var s = ""
+				let s = ""
 				values.map(function(v, i){
 					(values.length-1 != i) ? s+= "?," : s+="?";
 				});
@@ -33,7 +34,7 @@ class Model{
 
 	// update(table, props, values){
 	// 	this.db.serialize(function(){
-	// 		var stmt = db.prepare("UPDATE "+table+"("+props+") VALUES (?)");
+	// 		let stmt = db.prepare("UPDATE "+table+"("+props+") VALUES (?)");
 	// 		values.map(function(v){
 	// 			stmt.run(v);
 	// 		});
@@ -111,9 +112,9 @@ class Channel extends Model{
 	}
 
 	userChannels(userId, cb){
-		var con = this.connection;
-		var table = this.table;
-		var channels = [];
+		let con = this.connection;
+		let table = this.table;
+		let channels = [];
 		con.serialize(function(){
 			con.each("SELECT * FROM "+table+" WHERE USER_ID=?", userId, function(error, row){
 				if(error) return;
@@ -131,14 +132,14 @@ class Channel extends Model{
 	}
 
 	canCreate(message, cb){
-		var highestRole = message.member.highestRole;
+		let highestRole = message.member.highestRole;
 		
-		if (highestRole.id === ADMIN || highestRole.id === MODS){
+		if (STAFF.has(highestRole.id)){
 			cb(true); 
 			return;
 		}
 
-		if (highestRole.id !== PLAYERS){
+		if (!MEMBERS.has(highestRole.id)){
 			cb(false, "Você não possui o cargo Players! Peça para alguém que tenha ou a algum Mod"); 
 			return;
 		}
@@ -152,14 +153,14 @@ class Channel extends Model{
 	}
 
 	canRemove(message, channel_id, cb){
-		var highestRole = message.member.highestRole;
+		let highestRole = message.member.highestRole;
 		
-		if (highestRole.id === ADMIN || highestRole.id === MODS){
+		if (STAFF.has(highestRole.id)){
 			cb(true); 
 			return;
 		}
 
-		if (highestRole.id !== PLAYERS){
+		if (!MEMBERS.has(highestRole.id)){
 			cb(false, "Você não possui o cargo Players! Peça para alguém que tenha ou a algum Mod"); 
 			return;
 		}
@@ -194,8 +195,8 @@ module.exports = {
 // db.serialize(function() {
 //   db.run("CREATE TABLE lorem (info TEXT)");
  
-//   var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-//   for (var i = 0; i < 10; i++) {
+//   let stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+//   for (let i = 0; i < 10; i++) {
 //       stmt.run("Ipsum " + i);
 //   }
 //   stmt.finalize();
