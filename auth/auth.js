@@ -13,7 +13,7 @@ function authToken(c){
 			"MEMBERS": process.env.MEMBERS
 		}
 		console.log(auth);
-		c(auth.STAFF, auth.MEMBERS);
+		c(auth.STAFF.split(';'), auth.MEMBERS.split(';'));
 
 	}
 }
