@@ -33,7 +33,7 @@ bot.on("message", message => {
 		//Restrições
 		if(message.channel.type !== "text")
 			return;
-
+		
 		if(!(auth.STAFF.has(message.member.highestRole.id))
             &&
 		    BOT_CONFIG.textChannels.length > 0 && !BOT_CONFIG.textChannels.includes(message.channel)){

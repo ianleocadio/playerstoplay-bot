@@ -131,6 +131,7 @@ function sendPlayInfo(message, queueObject, queuePosition, title){
 }
 
 function getPlayInfo(message, searchParam, showInfo){
+
 	if(!message.member.voiceChannel){
 		message.channel.sendMessage("Você precisa estar em um canal de voz para utilizar este comando!");
 		return;
@@ -138,28 +139,29 @@ function getPlayInfo(message, searchParam, showInfo){
 		message.reply("É preciso informar o link ou nome da música :wink:");
 	//1
 
-	YTDL.getInfo(searchParam)
-		.then(function(info){
-
-			var queueObject = {
-				"info": info,
-				"requested_by": message.author
-			};
-			queuePosition = server.queue.push(queueObject);
-			if(showInfo || typeof(showInfo) === "undefined")
-				sendPlayInfo(message, queueObject, queuePosition, "Música adicionada!");
-			
-			if(!message.guild.voiceConnection){
-				message.member.voiceChannel.join()
-					.then(function(connection){
-						playMusic(connection, message);
-					});
-			}
-		},
-		function(error){
-			if (error) throw error;
+	var opts = {
+			maxResults: 10,
+			key: (auth.yt_key || process.env.YT_KEY)
 		}
-	);
+
+	YTDL.getInfo(searchParam, (err, info) => {
+		if (err) return console.log(err);
+
+		let queueObject = {
+			"info": info,
+			"requested_by": message.author
+		};
+		queuePosition = server.queue.push(queueObject);
+		if(showInfo || typeof(showInfo) === "undefined")
+			sendPlayInfo(message, queueObject, queuePosition, "Música adicionada!");
+		
+		if(!message.guild.voiceConnection){
+			message.member.voiceChannel.join()
+				.then(function(connection){
+					playMusic(connection, message);
+				});
+		}
+	});
 }
 
 function getPlaylist(message, playListId){
@@ -182,10 +184,9 @@ function getPlaylist(message, playListId){
  *													  *
  ******************************************************/
 function play(message, searchParams){
-
 	if(YTDL.validateURL(searchParams[2])){
 		var url = searchParams[2];
-
+		
 		if(url.includes("list=")){
 	    	url = url.split("list=")[1];
 	        if(url.includes("&t="))
@@ -210,6 +211,7 @@ function play(message, searchParams){
 		});
 		ytSearch(query, opts, function(error, results){
 			if(error) return console.log(error);
+
 
 			getPlayInfo(message, results[0].link);
 		});

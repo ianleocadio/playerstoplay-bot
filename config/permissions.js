@@ -47,7 +47,6 @@ class Permissions{
      */
 	call(message, func /**/){
 		var variadic_args = Array.prototype.slice.call(arguments, 2);
-		
 		//Verify permissions
 		if(!this.isPermitted(func, message.member.roles)){
 			message.reply('Você não possui cargo suficiente');
