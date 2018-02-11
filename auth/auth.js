@@ -12,21 +12,24 @@ function authToken(c){
 			"STAFF": process.env.STAFF,
 			"MEMBERS": process.env.MEMBERS
 		}
-		console.log(auth);
+		
 		c(auth.STAFF.split(';'), auth.MEMBERS.split(';'));
 
 	}
 }
 
 authToken(function(STAFF, MEMBERS){
+	console.log(auth);
 	let map = new Map();
 	STAFF.map(function(s){
+		s = JSON.parse(s);
 	    map.set(s.id, s.name);
     });
 	auth.STAFF = map;
 
 	map = new Map();
 	MEMBERS.map(function(m){
+		m = JSON.parse(m);
 	    map.set(m.id, m.name);
     });
 	auth.MEMBERS = map;
