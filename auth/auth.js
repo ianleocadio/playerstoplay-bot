@@ -12,7 +12,7 @@ function authToken(c){
 			"STAFF": process.env.STAFF,
 			"MEMBERS": process.env.MEMBERS
 		}
-
+		console.log(auth);
 		c(auth.STAFF, auth.MEMBERS);
 
 	}
