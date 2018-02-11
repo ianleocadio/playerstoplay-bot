@@ -16,11 +16,11 @@ function authToken(){
 		auth.MEMBERS = map;
 	}catch(e){
 		auth = {
-			"token": undefined,
-			"yt_key": undefined,
+			"token": process.env.BOT_TOKEN,
+			"yt_key": process.env.YT_KEY,
 
-			"STAFF": [],
-            "MEMBERS": []
+			"STAFF": (process.env.STAFF || []),
+            "MEMBERS": (process.env.MEMBERS || [])
 		}
 	}
 }

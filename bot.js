@@ -94,5 +94,5 @@ bot.on("channelDelete", channel => {
 	Commands.Channel.deleteChannelFromDB(channel);
 });
 
-bot.login(auth.token || process.env.BOT_TOKEN);
+bot.login(auth.token);
 
