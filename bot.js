@@ -79,6 +79,23 @@ bot.on("message", message => {
 		if(commands[0] === ".channel" || commands[0] === ".ch"){
 			Commands.Channel.commands(message);
 			return;
+		}else
+
+		if(commands[0] === ".t" ){
+			const GoogleImages = require('google-images');
+			const client = new GoogleImages('015410166601801766056:gzoxonezzps', auth.yt_key);
+
+			let query = Array.prototype.slice.call(commands, 1).toString();
+			query = query.replace(/,/g, " "); 
+
+			console.log(query);
+			client.search(query)
+			    .then(images => {
+			        message.author.send(images[0].url);
+			        message.delete();
+			    });
+
+			return;
 		}
 		//Comandos...
 
