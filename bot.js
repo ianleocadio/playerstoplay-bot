@@ -87,11 +87,15 @@ bot.on("message", message => {
 
 			let query = Array.prototype.slice.call(commands, 1).toString();
 			query = query.replace(/,/g, " "); 
+			query = query.replace(/(\<@.*?\>)/gi, ""); 
 
-			console.log(query);
+			let toWho = message.mentions.users;
+			
 			client.search(query)
 			    .then(images => {
-			        message.author.send(images[0].url);
+			        toWho.map(function(who){
+			        	who.send(images[0].url);
+			        });
 			        message.delete();
 			    });
 
