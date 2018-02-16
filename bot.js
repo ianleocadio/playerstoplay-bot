@@ -86,7 +86,7 @@ bot.on("message", message => {
 			return;
 		}else
 
-		if(commands[0] === ".t" ){
+		if(commands[0] === ".t"){
 			const GoogleImages = require('google-images');
 			const client = new GoogleImages('015410166601801766056:gzoxonezzps', auth.yt_key);
 
@@ -103,6 +103,34 @@ bot.on("message", message => {
 			        });
 			        message.delete();
 			    });
+
+			return;
+		}else
+
+		if(commands[0] === ".r34"){
+			var GoogleSearch = require('google-search');
+			var googleSearch = new GoogleSearch({
+			  key: auth.yt_key,
+			  cx: "015410166601801766056:ki1ibtmmofm"
+			});
+ 
+
+			let query = Array.prototype.slice.call(commands, 1).toString();
+			query = query.replace(/,/g, " "); 
+			query = query.replace(/(\<@.*?\>)/gi, ""); 
+
+			let toWho = message.mentions.users;
+			
+			googleSearch.build({
+			  q: query,
+			  num: 10, // Number of search results to return between 1 and 10, inclusive 
+			  siteSearch: "www.rule34.paheal.net" // Restricts results to URLs from a specified site 
+			}, function(error, response) {
+			  if(response.items){
+			  	message.author.send(response.items[0].link);
+			  }
+			});
+
 
 			return;
 		}
