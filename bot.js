@@ -30,6 +30,24 @@ bot.on("message", message => {
 	//Verificando qual o comando e repassando a resposabilidade de execução
 	if(commands && commands[0].startsWith(".")){
 
+		if(commands[0] === ".clear" || commands[0] === ".clean"){
+			let limit = (commands[1] || 50);
+			message.channel.fetchMessages({"limit": limit})
+				.then(function(messages){
+					try{
+						message.channel.bulkDelete(messages);
+					}catch(e){
+						message.channel.delete().then(function(channel){
+							console.log(channel);
+						})
+					}
+				}, 
+				function(error){
+					console.log(error);
+					return;	
+				});
+			return;
+		}
 		//Restrições
 		if(message.channel.type !== "text")
 			return;
@@ -63,21 +81,8 @@ bot.on("message", message => {
 			return;
 		}else
 
-		if(commands[0] === ".clear" || commands[0] === ".clean"){
-			let limit = (commands[1] || 50);
-			message.channel.fetchMessages({"limit": limit})
-				.then(function(messages){
-					message.channel.bulkDelete(messages);
-				}, 
-				function(error){
-					console.log(error);
-					return;	
-				});
-			return;
-		}else
-
 		if(commands[0] === ".channel" || commands[0] === ".ch"){
-			Commands.Channel.commands(message);
+			//Commands.Channel.commands(message);
 			return;
 		}else
 
