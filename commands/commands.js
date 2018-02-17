@@ -3,5 +3,6 @@ module.exports = {
 	"Help": require("./help.js"),
 	"Roles": require("./roles.js"),
 	"Music": require("./music.js"),
-	"Channel": require("./channel.js")
+	"Channel": require("./channel.js"),
+	"Warframe": require("./warframe.js")
 }

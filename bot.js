@@ -69,7 +69,7 @@ bot.on("message", message => {
 			return;
 		}else
 		if(commands[0] === ".add"){
-			Commands.Roles.addPlayerRole(message);
+			//Commands.Roles.addPlayerRole(message);
 			return;
 		}else
 		if(commands[0] === ".music" || commands[0] === ".m"){
@@ -83,6 +83,11 @@ bot.on("message", message => {
 
 		if(commands[0] === ".channel" || commands[0] === ".ch"){
 			//Commands.Channel.commands(message);
+			return;
+		}else
+
+		if(commands[0] === ".warframe" || commands[0] === ".wrf"){
+			Commands.Warframe.commands(message);
 			return;
 		}else
 
