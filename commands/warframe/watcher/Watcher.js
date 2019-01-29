@@ -14,8 +14,8 @@ class Watcher {
           this.channel = channel;
      }
 
-     push(item){
-          let o = new AlertItem(item, this.channel);
+     push(item, author, createAt){
+          let o = new AlertItem(item, this.channel, author, createAt);
           this.items.set(item, o);
           this.runAll();
      }
@@ -25,6 +25,10 @@ class Watcher {
           if (item){
                item.stop();
           }
+     }
+
+     get(item){
+          return this.items.get(item);
      }
 
      listCurrentAlerts(){

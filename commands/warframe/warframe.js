@@ -12,6 +12,7 @@ const Watcher = require("./watcher/Watcher");
 
 function commands(message) {
 	var commandArguments = message.content.match(/\S+/g);
+	console.log(commandArguments);
 
 	try {
 		var command = commandArguments[1].toLowerCase();
@@ -35,12 +36,16 @@ function commands(message) {
 		WarframePermissions.call(message, createWatcherAlert, message, commandArguments);
 	}
 
-	if (command === "swa" || command === "stopWatcherAlert") {
+	if (command === "pwa" || command === "pauseWatcherAlert") {
 		WarframePermissions.call(message, stopWatcherAlert, message, commandArguments);
 	}
 
 	if (command === "lwa" || command === "listWatcherAlert") {
 		WarframePermissions.call(message, listWatcherAlert, message, commandArguments);
+	}
+
+	if (command === "swa" || command === "statusWatcherAlert") {
+		WarframePermissions.call(message, statusWatcherAlert, message, commandArguments);
 	}
 
 
@@ -62,12 +67,6 @@ function snippetTreatment(snippet, query) {
 		var sLow = s.toLowerCase();
 		return sLow.includes(query);
 	});
-}
-
-async function watcher() {
-	let time = Date.now();
-	console.log(time);
-
 }
 
 /******************************************************
@@ -130,11 +129,11 @@ function createWatcherAlert(message, commands) {
 	let query = Array.prototype.slice.call(commands, 2).toString();
 	query = query.replace(/,/g, " ");
 	query = query.replace(/(\<@.*?\>)/gi, "");
-	let w = new Watcher(channel);
-	w.push(query);
+	let w = new Watcher(channel)
+	w.push(query, message.author, new Date());
 }
 
-function stopWatcherAlert(message, commands) {
+function pauseWatcherAlert(message, commands) {
 	let query = Array.prototype.slice.call(commands, 2).toString();
 	query = query.replace(/,/g, " ");
 	query = query.replace(/(\<@.*?\>)/gi, "");
@@ -146,6 +145,17 @@ function stopWatcherAlert(message, commands) {
 function listWatcherAlert(message, commands) {
 	let w = new Watcher();
 	w.listCurrentAlerts();
+	
+}
+
+function statusWatcherAlert(message, commands){
+	let query = Array.prototype.slice.call(commands, 2).toString();
+	query = query.replace(/,/g, " ");
+	query = query.replace(/(\<@.*?\>)/gi, "");
+	let w = new Watcher();
+	let item = w.get(commands[2]);
+	if (item == null) return;
+	message.channel.send(new Embeds.StatusAlertWatcherEmbed(item).show());
 	
 }
 
@@ -162,8 +172,9 @@ var functions = [
 	build,
 	alerts,
 	createWatcherAlert,
-	stopWatcherAlert,
-	listWatcherAlert
+	pauseWatcherAlert,
+	listWatcherAlert,
+	statusWatcherAlert
 ];
 var WarframePermissions = new Permissions(Utils.createListOfPermissions(functions));
 

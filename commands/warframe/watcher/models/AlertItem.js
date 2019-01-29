@@ -1,43 +1,52 @@
 const rp = require('request-promise');
 const Embeds = require("../../embeds/embeds.js");
 const WorldState = require("../../models/WorldState");
+const Utils = require("../../../../util/utils");
 
 class AlertItem{
 
-    constructor(item, channel){
+    constructor(item, channel, author = null, createdAt = null){
         this.id = item;
         this.delay = 10000;
         this.isRunning = false;
-        this.founded = false;
+        this.found = false;
         this.interval = null;
         this.alerts = null;
         this.channel = channel;
+        this.createdAt = createdAt;
+        this.author = author;
     }
 
     run(){
-        if (this.isRunning || this.founded) return;
+        if (this.isRunning || this.found) return;
 
         let item = this;
+
         this.interval = setInterval(function f() {
             item.isRunning = true;
-             if (item.founded) {
-                return;
-            }
             rp('http://content.warframe.com/dynamic/worldState.php')
                 .then(function (response) {
                     let ws = new WorldState(response);
                     let alerts = ws.alerts.filter(a => a.rewardTypes.includes(item.id));
-                    if (alerts.length > 0) {
-                         item.founded = true;
-                         item.alerts = alerts;
-                         
-                         let alertEmbed = new Embeds.AlertEmbed(item.alerts, "PC");
-                         console.log(item);
-                         item.channel.send(alertEmbed.showAlerts());
-                         if (item.active)
-                            item.updateTime(item[0].eta, true);
+                    if (alerts.length < 1) {                        
+                        if (item.found) item.updateTime(f, item.delay);
+                        item.found = false; 
+                        return;
                     }
-
+                    item.found = true;
+                    item.alerts = alerts;
+                    let alertEmbed = new Embeds.AlertEmbed(item.alerts, "PC");
+                    item.channel.send(alertEmbed.showAlerts());
+                    if (alerts.some(i=>i.active)) {
+                        let max = 0;
+                        item.alerts.map(a=>{
+                            let aConverted = Utils.convertEta(a.eta);
+                            if(aConverted > max)
+                                max = aConverted;
+                        });
+                        console.log(max);
+                        item.updateTime(f, max);
+                    }
 
                 })
                 .catch(function (err) {
@@ -52,16 +61,13 @@ class AlertItem{
         item.isRunning = false;
     }
 
-    updateTime(interval, needConvert = false){
-        
+    updateTime(f, interval, needConvert = false){
         if (needConvert){
-            interval = interval.split(" ");
-            m = interval[0].replace("m", "");
-            s = interval[1].replace("s", "");
-            interval = m*60000 + s*1000;
+            interval = Utils.convertEta(interval)
         }
-        this.interval._repeat = interval;
-        
+        clearInterval(this.interval);
+        let item = this;
+        this.interval = setInterval(f, interval);
     }
 
     

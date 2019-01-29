@@ -61,6 +61,14 @@ class AlertEmbed extends BaseEmbed {
     return this;
   }
 
+  showOnStatus(){
+    return this.alerts.map(a => ({
+      name: `${a.mission.reward.asString} | ${a.eta} left`,
+      value: `${a.mission.faction} ${a.mission.type} on ${a.mission.node}\n`
+        + `level ${a.mission.minEnemyLevel} - ${a.mission.maxEnemyLevel}\n\u200B`,
+    }));
+  }
+
 }
 
 module.exports = AlertEmbed;
