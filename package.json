@@ -9,15 +9,20 @@
   "author": "Ian Leocádio",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.3.0",
+    "discord.js": "^11.4.2",
     "google-images": "^2.1.0",
     "google-search": "0.0.5",
-    "nodemon": "^1.14.12",
+    "https": "^1.0.0",
+    "nodemon": "^1.18.9",
+    "on-change": "^1.0.0",
     "opusscript": "0.0.6",
+    "package.json": "^2.0.1",
+    "request-promise": "^4.2.2",
     "sqlite3": "^3.1.13",
-    "uuid": "^3.2.1",
+    "uuid": "^3.3.2",
+    "warframe-worldstate-parser": "^2.1.28",
     "youtube-playlist-info": "^1.1.2",
-    "youtube-search": "^1.0.10",
-    "ytdl-core": "~0.20.1"
+    "youtube-search": "^1.1.4",
+    "ytdl-core": "^0.20.4"
   }
 }

@@ -8,15 +8,7 @@ function createListOfPermissions(functions){
 	});
 	return map;
 }
-function httpGet(theUrl, callback){
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
-    xmlHttp.send(null);
-}
+
 
 function uuid(){
 	const uuidv4 = require('uuid/v4');
@@ -26,6 +18,5 @@ function uuid(){
 
 module.exports = {
 	"createListOfPermissions": createListOfPermissions,
-	"httpGet": httpGet,
 	"uuid": uuid
 }

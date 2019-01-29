@@ -12,7 +12,6 @@ function authToken(c){
 			"STAFF": process.env.STAFF,
 			"MEMBERS": process.env.MEMBERS
 		}
-		
 		var staff = auth.STAFF.split(';');
 		staff = staff.map(function(s){
 			return JSON.parse(s);

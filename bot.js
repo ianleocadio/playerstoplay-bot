@@ -7,6 +7,7 @@ var BOT_CONFIG = require("./config/bot_config.js")
 
 var bot = new Discord.Client({disableEveryone: true});
 
+//https://discordapp.com/oauth2/authorize?client_id=%3cBot_Client_ID%3e&scope=bot&permissions=8
 
 bot.on("ready", () => {
 	console.log("BOT Online");
@@ -91,7 +92,7 @@ bot.on("message", message => {
 			return;
 		}else
 
-		if(commands[0] === ".t"){
+		if(commands[0] === ".g"){
 			const GoogleImages = require('google-images');
 			const client = new GoogleImages('015410166601801766056:gzoxonezzps', auth.yt_key);
 
@@ -137,6 +138,15 @@ bot.on("message", message => {
 			});
 
 
+			return;
+		}
+
+		if(commands[0] === ".lulalivre"){
+			message.channel.send("LULA TA PRESO! BABACA!");
+			return;
+		}
+		if(commands[0] === ".gloria"){
+			message.channel.send("A DEUXXXXXX!!!");
 			return;
 		}
 		//Comandos...
