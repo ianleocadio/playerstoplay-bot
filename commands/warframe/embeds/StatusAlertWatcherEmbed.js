@@ -1,4 +1,4 @@
-const Embeds = require("./embeds.js");
+const AlertEmbed = require("./AlertEmbed.js");
 const BaseEmbed = require('./BaseEmbed.js');
 const assetBase = 'https://cdn.warframestat.us/genesis';
 const Utils = require("../../../util/utils");
@@ -29,8 +29,14 @@ class StatusAlertWatcherEmbed extends BaseEmbed {
                 let date = Utils.formatDate(this.item.alerts[0].expiry);
                 date = `${date.dayString}, ${date.day} ${date.monthString} ${date.year} at ${date.hours}:${date.minutes}`;
                 this.fields.push({ name: `Status:`, value: `Will started again on ${date}`, inline: true });
-
-                let activeAlerts = new Embeds.AlertEmbed().showOn;
+                
+                this.fields.push({ name: `Current Worldstate - Alerts`, value: ``, inline: false });
+                let activeAlerts = (new AlertEmbed(this.item.alerts, "PC")).showStatus();
+                if (activeAlerts.length > 0){
+                    activeAlerts.map(aa=>{
+                        this.fields.push(aa);
+                    });
+                }
 
             } else {
                 this.fields.push({ name: `Found ?`, value: "No", inline: true });

@@ -13,7 +13,7 @@ class AlertEmbed extends BaseEmbed {
    * @param {Array.<Alert>} alerts - The alerts to be included in the embed
    * @param {string} platform - platform
    */
-  constructor(alerts, platform) {
+  constructor(alerts, platform = "PC") {
     super();
     this.alerts = alerts;
     this.platform = platform;
@@ -61,7 +61,7 @@ class AlertEmbed extends BaseEmbed {
     return this;
   }
 
-  showOnStatus(){
+  showStatus(){
     return this.alerts.map(a => ({
       name: `${a.mission.reward.asString} | ${a.eta} left`,
       value: `${a.mission.faction} ${a.mission.type} on ${a.mission.node}\n`

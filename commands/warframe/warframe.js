@@ -155,7 +155,7 @@ function statusWatcherAlert(message, commands){
 	let w = new Watcher();
 	let item = w.get(commands[2]);
 	if (item == null) return;
-	message.channel.send(new Embeds.StatusAlertWatcherEmbed(item).show());
+	message.channel.send((new Embeds.StatusAlertWatcherEmbed(item)).show());
 	
 }
 
