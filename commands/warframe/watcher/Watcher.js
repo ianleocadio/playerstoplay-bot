@@ -37,7 +37,7 @@ class Watcher {
      }
 
      runAll(){
-          this.items.forEach(i=>i.run());
+          this.items.forEach((i) => i.run());
      }
 
 }
