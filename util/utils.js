@@ -37,7 +37,7 @@ function formatDate(d = new Date()) {
 		hours,
 		minutes,
 		ampm
-	}
+	};
 }
 
 module.exports = {
