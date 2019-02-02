@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const BaseEmbed = require('./BaseEmbed.js');
-const assetBase = 'https://cdn.warframestat.us/genesis';
+const BaseEmbed = require("./BaseEmbed.js");
+const assetBase = "https://cdn.warframestat.us/genesis";
 
 const alertThumb = `${assetBase}/img/alert.png`;
 
@@ -25,10 +25,10 @@ class AlertEmbed extends BaseEmbed {
     this.thumbnail = {
       url: alertThumb,
     };
-    this.color = 0xF1C40F;
+    this.color = "#F1C40F";
     // compact
     if (this.alerts.length > 1) {
-      this.fields = this.alerts.map(a => ({
+      this.fields = this.alerts.map((a) => ({
         name: `${a.mission.reward.asString} | ${a.eta} left`,
         value: `${a.mission.faction} ${a.mission.type} on ${a.mission.node}\n`
           + `level ${a.mission.minEnemyLevel} - ${a.mission.maxEnemyLevel}\n\u200B`,
@@ -44,15 +44,15 @@ class AlertEmbed extends BaseEmbed {
 
       this.fields = [];
       if (this.description !== summary) {
-        this.fields.push({ name: 'Mission', value: `${a.mission.faction} ${a.mission.type}`, inline: true });
-        this.fields.push({ name: 'Location', value: a.mission.node, inline: true });
+        this.fields.push({ name: "Mission", value: `${a.mission.faction} ${a.mission.type}`, inline: true });
+        this.fields.push({ name: "Location", value: a.mission.node, inline: true });
       }
-      this.fields.push({ name: 'Levels:', value: `${a.mission.minEnemyLevel} - ${a.mission.maxEnemyLevel}`, inline: true });
+      this.fields.push({ name: "Levels:", value: `${a.mission.minEnemyLevel} - ${a.mission.maxEnemyLevel}`, inline: true });
 
-      this.fields.push({ name: 'Archwing Required', value: a.mission.archwingRequired ? 'Yes' : 'No', inline: true });
+      this.fields.push({ name: "Archwing Required", value: a.mission.archwingRequired ? "Yes" : "No", inline: true });
 
-      if (this.title.indexOf('Cr') === -1) {
-        this.fields.push({ name: '\u200B', value: `**Credits:** ${a.mission.reward.credits}`, inline: true });
+      if (this.title.indexOf("Cr") === -1) {
+        this.fields.push({ name: "\u200B", value: `**Credits:** ${a.mission.reward.credits}`, inline: true });
       }
       this.footer.text = `${a.eta} remaining • Expires `;
       this.timestamp = a.expiry;
