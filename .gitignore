@@ -62,3 +62,6 @@ typings/
 .env
 
 .idea/
+
+# Vscode settings
+.vscode

@@ -1,69 +1,22 @@
 const Discord = require("discord.js");
 const Utils = require("../../util/utils.js");
-const auth = require('../../auth/auth.js');
-const rp = require('request-promise');
+const auth = require("../../auth/auth.js");
+const rp = require("request-promise");
 const WorldState = require("./models/WorldState");
 const Embeds = require("./embeds/embeds.js");
 const Watcher = require("./watcher/Watcher");
 
 
-
-
-
-function commands(message) {
-	var commandArguments = message.content.match(/\S+/g);
-	console.log(commandArguments);
-
-	try {
-		var command = commandArguments[1].toLowerCase();
-	} catch (e) {
-		return;
-	}
-
-	if (!command) {
-		return;
-	} else
-
-		if (command === "b" || command === "build") {
-			WarframePermissions.call(message, build, message, commandArguments);
-		}
-
-	if (command === "a" || command === "alerts") {
-		WarframePermissions.call(message, alerts, message, commandArguments);
-	}
-
-	if (command === "cwa" || command === "createWatcherAlert") {
-		WarframePermissions.call(message, createWatcherAlert, message, commandArguments);
-	}
-
-	if (command === "pwa" || command === "pauseWatcherAlert") {
-		WarframePermissions.call(message, stopWatcherAlert, message, commandArguments);
-	}
-
-	if (command === "lwa" || command === "listWatcherAlert") {
-		WarframePermissions.call(message, listWatcherAlert, message, commandArguments);
-	}
-
-	if (command === "swa" || command === "statusWatcherAlert") {
-		WarframePermissions.call(message, statusWatcherAlert, message, commandArguments);
-	}
-
-
-}
-
-
-
-
 /******************************************************
  *													  *
  *													  *
- *				Auxiliary's functions				  *
+ *				Auxiliary"s functions				  *
  *													  *
  *													  *
  ******************************************************/
 function snippetTreatment(snippet, query) {
-	snippet = snippet.split('\n').join('');
-	return snippet.split('.').find(function (s) {
+	snippet = snippet.split("\n").join("");
+	return snippet.split(".").find(function (s) {
 		var sLow = s.toLowerCase();
 		return sLow.includes(query);
 	});
@@ -72,13 +25,13 @@ function snippetTreatment(snippet, query) {
 /******************************************************
  *													  *
  *													  *
- *				Command's functions					  *
+ *				Command"s functions					  *
  *													  *
  *													  *
  ******************************************************/
 
 function build(message, commands) {
-	var GoogleSearch = require('google-search');
+	var GoogleSearch = require("google-search");
 	var googleSearch = new GoogleSearch({
 		key: auth.yt_key,
 		cx: "015410166601801766056:e_vka8pzzb4"
@@ -96,7 +49,7 @@ function build(message, commands) {
 		if (response.items) {
 			var item = snippetTreatment(response.items[0].snippet, query).trim();
 			var link = response.items[0].link;
-			link += "/Builder/" + item.split(' ').join('_');
+			link += "/Builder/" + item.split(" ").join("_");
 			message.channel.send(link);
 		}
 	});
@@ -104,7 +57,7 @@ function build(message, commands) {
 
 function alerts(message, commands) {
 
-	rp('http://content.warframe.com/dynamic/worldState.php')
+	rp("http://content.warframe.com/dynamic/worldState.php")
 		.then(function (response) {
 			let ws = new WorldState(response);
 
@@ -121,7 +74,7 @@ function alerts(message, commands) {
 
 function createWatcherAlert(message, commands) {
 	
-	const channel = message.client.channels.find(c=>c.name == 'alerts' && c.type == 'text');
+	const channel = message.client.channels.find(c=>c.name == "alerts" && c.type == "text");
 
 	if (!channel) {
 		return;
@@ -177,6 +130,59 @@ var functions = [
 	statusWatcherAlert
 ];
 var WarframePermissions = new Permissions(Utils.createListOfPermissions(functions));
+
+
+/******************************************************
+ *													  *
+ *													  *
+ *						Command					  *
+ *													  *
+ *													  *
+ ******************************************************/
+
+function commands(message) {
+	var commandArguments = message.content.match(/\S+/g);
+	//console.log(commandArguments);
+
+	try {
+		var command = commandArguments[1].toLowerCase();
+	} catch (e) {
+		return;
+	}
+
+	if (!command) {
+		return;
+	} else if (command === "b" || command === "build") {
+		WarframePermissions.call(message, build, message, commandArguments);
+	}
+
+	if (command === "a" || command === "alerts") {
+		WarframePermissions.call(message, alerts, message, commandArguments);
+	}
+
+	if (command === "cwa" || command === "createWatcherAlert") {
+		WarframePermissions.call(message, createWatcherAlert, message, commandArguments);
+	}
+
+	if (command === "pwa" || command === "pauseWatcherAlert") {
+		WarframePermissions.call(message, stopWatcherAlert, message, commandArguments);
+	}
+
+	if (command === "lwa" || command === "listWatcherAlert") {
+		WarframePermissions.call(message, listWatcherAlert, message, commandArguments);
+	}
+
+	if (command === "swa" || command === "statusWatcherAlert") {
+		WarframePermissions.call(message, statusWatcherAlert, message, commandArguments);
+	}
+
+
+}
+
+
+
+
+
 
 
 /******************************************************
