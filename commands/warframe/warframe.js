@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+//const Discord = require("discord.js");
 const Utils = require("../../util/utils.js");
 const auth = require("../../auth/auth.js");
 const rp = require("request-promise");
@@ -17,9 +17,16 @@ const Watcher = require("./watcher/Watcher");
 function snippetTreatment(snippet, query) {
 	snippet = snippet.split("\n").join("");
 	return snippet.split(".").find(function (s) {
-		var sLow = s.toLowerCase();
+		let sLow = s.toLowerCase();
 		return sLow.includes(query);
 	});
+}
+
+function getCommandArguments(command){
+	let query = Array.prototype.slice.call(command, 2).toString();
+	query = query.replace(/,/g, " ");
+	query = query.replace(/(\<@.*?\>)/gi, "");
+	return query;
 }
 
 /******************************************************
@@ -31,24 +38,22 @@ function snippetTreatment(snippet, query) {
  ******************************************************/
 
 function build(message, commands) {
-	var GoogleSearch = require("google-search");
-	var googleSearch = new GoogleSearch({
+	let GoogleSearch = require("google-search");
+	let googleSearch = new GoogleSearch({
 		key: auth.yt_key,
 		cx: "015410166601801766056:e_vka8pzzb4"
 	});
 
 
-	let query = Array.prototype.slice.call(commands, 2).toString();
-	query = query.replace(/,/g, " ");
-	query = query.replace(/(\<@.*?\>)/gi, "");
+	let query = getCommandArguments(commands);
 
 	googleSearch.build({
 		q: query,
 		num: 10, // Number of search results to return between 1 and 10, inclusive 
 	}, function (error, response) {
 		if (response.items) {
-			var item = snippetTreatment(response.items[0].snippet, query).trim();
-			var link = response.items[0].link;
+			let item = snippetTreatment(response.items[0].snippet, query).trim();
+			let link = response.items[0].link;
 			link += "/Builder/" + item.split(" ").join("_");
 			message.channel.send(link);
 		}
@@ -62,11 +67,9 @@ function alerts(message, commands) {
 			let ws = new WorldState(response);
 
 			let alertEmbed = new Embeds.AlertEmbed(ws.alerts, "PC");
-			console.log(ws.alerts);
 			message.channel.send(alertEmbed.showAlerts());
 		})
 		.catch(function (err) {
-			console.log(err);
 		});
 
 
@@ -79,17 +82,13 @@ function createWatcherAlert(message, commands) {
 	if (!channel) {
 		return;
 	}
-	let query = Array.prototype.slice.call(commands, 2).toString();
-	query = query.replace(/,/g, " ");
-	query = query.replace(/(\<@.*?\>)/gi, "");
+	let query = getCommandArguments(commands);
 	let w = new Watcher(channel)
 	w.push(query, message.author, new Date());
 }
 
 function pauseWatcherAlert(message, commands) {
-	let query = Array.prototype.slice.call(commands, 2).toString();
-	query = query.replace(/,/g, " ");
-	query = query.replace(/(\<@.*?\>)/gi, "");
+	let query = getCommandArguments(commands);
 	let w = new Watcher();
 	w.stop(query);
 }
@@ -102,9 +101,7 @@ function listWatcherAlert(message, commands) {
 }
 
 function statusWatcherAlert(message, commands){
-	let query = Array.prototype.slice.call(commands, 2).toString();
-	query = query.replace(/,/g, " ");
-	query = query.replace(/(\<@.*?\>)/gi, "");
+	
 	let w = new Watcher();
 	let item = w.get(commands[2]);
 	if (item == null) return;
@@ -121,7 +118,7 @@ function statusWatcherAlert(message, commands){
  *													  *
  ******************************************************/
 const Permissions = require("../../config/permissions.js");
-var functions = [
+let functions = [
 	build,
 	alerts,
 	createWatcherAlert,
@@ -129,7 +126,7 @@ var functions = [
 	listWatcherAlert,
 	statusWatcherAlert
 ];
-var WarframePermissions = new Permissions(Utils.createListOfPermissions(functions));
+let WarframePermissions = new Permissions(Utils.createListOfPermissions(functions));
 
 
 /******************************************************
@@ -141,18 +138,19 @@ var WarframePermissions = new Permissions(Utils.createListOfPermissions(function
  ******************************************************/
 
 function commands(message) {
-	var commandArguments = message.content.match(/\S+/g);
+	let commandArguments = message.content.match(/\S+/g);
 	//console.log(commandArguments);
-
+	let command = null;
 	try {
-		var command = commandArguments[1].toLowerCase();
+		command = commandArguments[1].toLowerCase();
 	} catch (e) {
 		return;
 	}
 
 	if (!command) {
 		return;
-	} else if (command === "b" || command === "build") {
+	} else 
+	if (command === "b" || command === "build") {
 		WarframePermissions.call(message, build, message, commandArguments);
 	}
 
@@ -178,11 +176,6 @@ function commands(message) {
 
 
 }
-
-
-
-
-
 
 
 /******************************************************
