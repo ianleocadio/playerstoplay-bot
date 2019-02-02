@@ -5,7 +5,7 @@ const rp = require("request-promise");
 const WorldState = require("./models/WorldState");
 const Embeds = require("./embeds/embeds.js");
 const Watcher = require("./watcher/Watcher");
-
+const CommandMap = require("../CommandMap");
 
 /******************************************************
  *													  *
@@ -22,7 +22,7 @@ function snippetTreatment(snippet, query) {
 	});
 }
 
-function getCommandArguments(command){
+function getCommandArguments(command) {
 	let query = Array.prototype.slice.call(command, 2).toString();
 	query = query.replace(/,/g, " ");
 	query = query.replace(/(\<@.*?\>)/gi, "");
@@ -76,7 +76,7 @@ function alerts(message, commands) {
 }
 
 function createWatcherAlert(message, commands) {
-	
+
 	const channel = message.client.channels.find((c) => c.name === "alerts" && c.type === "text");
 
 	if (!channel) {
@@ -97,10 +97,10 @@ function pauseWatcherAlert(message, commands) {
 function listWatcherAlert(message, commands) {
 	let w = new Watcher();
 	w.listCurrentAlerts();
-	
+
 }
 
-function statusWatcherAlert(message, commands){
+function statusWatcherAlert(message, commands) {
 
 	let w = new Watcher();
 	let item = w.get(commands[2]);
@@ -108,7 +108,7 @@ function statusWatcherAlert(message, commands){
 		return;
 	}
 	message.channel.send((new Embeds.StatusAlertWatcherEmbed(item)).show());
-	
+
 }
 
 
@@ -139,6 +139,14 @@ let WarframePermissions = new Permissions(Utils.createListOfPermissions(function
  *													  *
  ******************************************************/
 
+let commandsList = new CommandMap();
+commandsList.set(/^(?:build)$/g, build);
+commandsList.set(/^(?:alerts)$/g, alerts);
+commandsList.set(/^(?:cwa|createWatcherAlert)$/g, createWatcherAlert);
+commandsList.set(/^(?:pwa|pauseWatcherAlert)$/g, pauseWatcherAlert);
+commandsList.set(/^(?:lwa|listWatcherAlert)$/g, listWatcherAlert);
+commandsList.set(/^(?:swa|statusWatcherAlert)$/g, statusWatcherAlert);
+
 function commands(message) {
 	let commandArguments = message.content.match(/\S+/g);
 	//console.log(commandArguments);
@@ -151,33 +159,14 @@ function commands(message) {
 
 	if (!command) {
 		return;
+	}else{
+		command = commandsList.getCommandImplementation(command);
+		if (command) {
+			WarframePermissions.call(message, command, message, commandArguments);
+		}else{
+			return;
+		}
 	}
-	 
-	if (command === "b" || command === "build") {
-		WarframePermissions.call(message, build, message, commandArguments);
-	}
-
-	if (command === "a" || command === "alerts") {
-		WarframePermissions.call(message, alerts, message, commandArguments);
-	}
-
-	if (command === "cwa" || command === "createWatcherAlert") {
-		WarframePermissions.call(message, createWatcherAlert, message, commandArguments);
-	}
-
-	if (command === "pwa" || command === "pauseWatcherAlert") {
-		WarframePermissions.call(message, pauseWatcherAlert, message, commandArguments);
-	}
-
-	if (command === "lwa" || command === "listWatcherAlert") {
-		WarframePermissions.call(message, listWatcherAlert, message, commandArguments);
-	}
-
-	if (command === "swa" || command === "statusWatcherAlert") {
-		WarframePermissions.call(message, statusWatcherAlert, message, commandArguments);
-	}
-
-
 }
 
 
