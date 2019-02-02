@@ -177,4 +177,4 @@ function commands(message) {
  *													  *
  *													  *
  ******************************************************/
-module.exports = commands;
+module.exports = {commands};
