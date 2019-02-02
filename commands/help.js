@@ -32,16 +32,18 @@ function help(message) {
 function possibleCommand(message) {
 	var cantExecuteHelpCommand = false;
 	message.channel.fetchMessages({ limit: 5, before: message.id })
-		.then(messages => {
+		.then((messages) => {
 			const alreadyCommands = ["/gamerescape", "/xivdb", "/giphy", "/tenor", "/tts", "/me", "/tableflip", "/unflip", "/shrug"];
 			var noneOfThen = true;
-			alreadyCommands.map(function (command) {
-				if (message.content.startsWith(command))
+			alreadyCommands.map((command) => {
+				if (message.content.startsWith(command)){
 					noneOfThen = false;
+				}
 			});
-			messages.map(function (bm) {
-				if (bm.content.startsWith("/") && noneOfThen && (Date.now() - bm.createdTimestamp < 300000))
+			messages.map((bm) => {
+				if (bm.content.startsWith("/") && noneOfThen && (Date.now() - bm.createdTimestamp < 300000)){
 					cantExecuteHelpCommand = true;
+				}
 			});
 
 			if (cantExecuteHelpCommand) {
@@ -49,10 +51,9 @@ function possibleCommand(message) {
 				return;
 			}
 
-
-
-			if (noneOfThen)
+			if (noneOfThen){
 				message.reply("Possível tentativa de usar um comando avistado! Utilize '/help' para listar os comandos atuais  :upside_down:");
+			}
 		});
 
 }
