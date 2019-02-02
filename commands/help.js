@@ -52,7 +52,7 @@ function possibleCommand(message) {
 			}
 
 			if (noneOfThen){
-				message.reply("Possível tentativa de usar um comando avistado! Utilize '/help' para listar os comandos atuais  :upside_down:");
+				message.reply("Possível tentativa de usar um comando avistado! Utilize '.help' para listar os comandos atuais  :upside_down:");
 			}
 		});
 

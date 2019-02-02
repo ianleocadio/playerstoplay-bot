@@ -25,7 +25,7 @@ class AlertEmbed extends BaseEmbed {
     this.thumbnail = {
       url: alertThumb,
     };
-    this.color = "#F1C40F";
+    this.color = 0xF1C40F;
     // compact
     if (this.alerts.length > 1) {
       this.fields = this.alerts.map((a) => ({

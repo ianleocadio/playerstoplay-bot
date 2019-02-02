@@ -20,7 +20,7 @@ class StatusAlertWatcherEmbed extends BaseEmbed {
             url: `${assetBase}/img/outage.png`
         };
 
-        this.color = "#fa727b";
+        this.color = 0xfa727b;
         this.title = "Alert Watcher";
         this.fields.push({ name: "Category", value: `${this.item.id}`, inline: true });
         if (this.item.isRunning) {

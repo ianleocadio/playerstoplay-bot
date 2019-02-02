@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 let BOT_CONFIG = require("./bot_config.js");
 const Utils = require("../util/utils.js");
-const CommandMap = require("./CommandMap");
+const CommandMap = require("../commands/CommandMap");
 
 /******************************************************
  *													  *
@@ -40,7 +40,7 @@ function setTextChannel(message, commandArguments) {
 
     for (let i = 0; i < textChannels.length; i++) {
         let textChannel = message.guild.channels.find((tc) => {
-            return (tc.name === textChannels[i])) && (tc.type === "text");
+            return (tc.name === textChannels[i]) && (tc.type === "text");
         });
         if (textChannel) {
             if (!BOT_CONFIG.textChannels.includes(textChannel)) {

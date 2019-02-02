@@ -13,7 +13,7 @@ const STAFF = auth.STAFF,
  *													  *
  ******************************************************/
 function formatProps(props, values) {
-	props = props.match(/\S+/g);;
+	props = props.match(/\S+/g);
 	props = props.map((p, i) => {
 		p = p.replace(",", "");
 		return p += "=" + values[i];
@@ -101,7 +101,7 @@ class Model {
 
 		} catch (e) {
 			//console.log(e);
-			cb(null, error);
+			cb(null, e);
 			return;
 		}
 	}
@@ -118,7 +118,9 @@ class Channel extends Model {
 		let channels = [];
 		con.serialize(() => {
 			con.each("SELECT * FROM " + table + " WHERE USER_ID=?", userId, (error, row) => {
-				if (error) return;
+				if (error){ 
+					return;
+				}
 
 				channels.push(row);
 			}, function (error, length) {
@@ -154,7 +156,7 @@ class Channel extends Model {
 		});
 	}
 
-	canRemove(message, channel_id, cb) {
+	canRemove(message, channelId, cb) {
 		let highestRole = message.member.highestRole;
 
 		if (STAFF.has(highestRole.id)) {
@@ -167,13 +169,13 @@ class Channel extends Model {
 			return;
 		}
 
-		this.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel_id], (channel, error) => {
+		this.findOne("USER_ID, CHANNEL_ID", [message.author.id, channelId], (channel, error) => {
 			if (error){ 
 				cb(false, error);
 			}
 
 			if (channel){
-				cb(true)
+				cb(true);
 			}else{
 				cb(false, "Este canal pertece a outro membro");
 			}
