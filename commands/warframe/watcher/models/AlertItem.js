@@ -31,7 +31,9 @@ class AlertItem{
                     let ws = new WorldState(response);
                     let alerts = ws.alerts.filter((a) => a.rewardTypes.includes(item.id));
                     if (alerts.length < 1) {                        
-                        if (item.found) item.updateTime(f, item.delay);
+                        if (item.found) {
+                            item.updateTime(f, item.delay);
+                        }
                         item.found = false; 
                         return;
                     }
@@ -43,8 +45,9 @@ class AlertItem{
                         let max = 0;
                         item.alerts.map((a) => {
                             let aConverted = Utils.convertEta(a.eta);
-                            if(aConverted > max)
+                            if(aConverted > max){
                                 max = aConverted;
+                            }
                         });
                         item.updateTime(f, max);
                     }
