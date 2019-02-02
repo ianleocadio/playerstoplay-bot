@@ -33,7 +33,7 @@ class StatusAlertWatcherEmbed extends BaseEmbed {
                 this.fields.push({ name: "Current Worldstate - Alerts", value: "", inline: false });
                 let activeAlerts = (new AlertEmbed(this.item.alerts, "PC")).showStatus();
                 if (activeAlerts.length > 0){
-                    activeAlerts.map(aa=>{
+                    activeAlerts.map((aa) => {
                         this.fields.push(aa);
                     });
                 }
