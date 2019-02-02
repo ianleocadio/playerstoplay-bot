@@ -77,13 +77,13 @@ function alerts(message, commands) {
 
 function createWatcherAlert(message, commands) {
 	
-	const channel = message.client.channels.find(c=>c.name == "alerts" && c.type == "text");
+	const channel = message.client.channels.find((c) => c.name === "alerts" && c.type === "text");
 
 	if (!channel) {
 		return;
 	}
 	let query = getCommandArguments(commands);
-	let w = new Watcher(channel)
+	let w = new Watcher(channel);
 	w.push(query, message.author, new Date());
 }
 
@@ -101,10 +101,12 @@ function listWatcherAlert(message, commands) {
 }
 
 function statusWatcherAlert(message, commands){
-	
+
 	let w = new Watcher();
 	let item = w.get(commands[2]);
-	if (item == null) return;
+	if (item == null) {
+		return;
+	}
 	message.channel.send((new Embeds.StatusAlertWatcherEmbed(item)).show());
 	
 }
@@ -149,7 +151,8 @@ function commands(message) {
 
 	if (!command) {
 		return;
-	} else 
+	}
+	 
 	if (command === "b" || command === "build") {
 		WarframePermissions.call(message, build, message, commandArguments);
 	}
@@ -163,7 +166,7 @@ function commands(message) {
 	}
 
 	if (command === "pwa" || command === "pauseWatcherAlert") {
-		WarframePermissions.call(message, stopWatcherAlert, message, commandArguments);
+		WarframePermissions.call(message, pauseWatcherAlert, message, commandArguments);
 	}
 
 	if (command === "lwa" || command === "listWatcherAlert") {
