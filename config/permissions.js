@@ -34,10 +34,6 @@ function permInfo() {
  *													  *
  ******************************************************/
 
-let commandsList = new CommandMap();
-commandsList.set(/^(?:ar|addRoles)$/g, addRoles);
-commandsList.set(/^(?:ac|addCommands)$/g, addCommands);
-
 /**
  * Implementation of addRole command"s function
  *
@@ -113,6 +109,10 @@ function addCommands(permObject, message, commandArguments, roleName) {
 		message.channel.send(embed);
 	}
 }
+
+let commandsList = new CommandMap();
+commandsList.set(/^(?:ar|addRoles)$/g, addRoles);
+commandsList.set(/^(?:ac|addCommands)$/g, addCommands);
 
 /**
 * Permission class definition
