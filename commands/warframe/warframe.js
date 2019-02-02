@@ -134,7 +134,7 @@ let WarframePermissions = new Permissions(Utils.createListOfPermissions(function
 /******************************************************
  *													  *
  *													  *
- *						Command					  *
+ *						Command					      *
  *													  *
  *													  *
  ******************************************************/
