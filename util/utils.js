@@ -1,6 +1,6 @@
-function createListOfPermissions(functions){
+function createListOfPermissions(functions) {
 	var map = new Map();
-	functions.map(function(f){
+	functions.map(function (f) {
 		map.set(f.name, {
 			"function": f,
 			"roles": new Map()
@@ -10,39 +10,39 @@ function createListOfPermissions(functions){
 }
 
 
-function uuid(){
-	const uuidv4 = require('uuid/v4');
+function uuid() {
+	const uuidv4 = require("uuid/v4");
 	return uuidv4();
 }
 
-function convertEta(interval){
+function convertEta(interval) {
 	interval = interval.split(" ");
-	m = interval[0].replace("m", "");
-	s = interval[1].replace("s", "");
-	interval = m*60000 + s*1000;
+	let m = interval[0].replace("m", "");
+	let s = interval[1].replace("s", "");
+	interval = m * 60000 + s * 1000;
 	return interval;
 }
 function formatDate(d = new Date()) {
-		minutes = d.getMinutes().toString().length == 1 ? '0'+d.getMinutes() : d.getMinutes(),
-		hours = d.getHours().toString().length == 1 ? '0'+d.getHours() : d.getHours(),
-		ampm = d.getHours() >= 12 ? 'pm' : 'am',
-		months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-		days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+		let minutes = d.getMinutes().toString().length === 1 ? "0" + d.getMinutes() : d.getMinutes();
+		let hours = d.getHours().toString().length === 1 ? "0" + d.getHours() : d.getHours();
+		let ampm = d.getHours() >= 12 ? "pm" : "am";
+		let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	return {
-		dayString: days[d.getDay()],
-		day: d.getDay(),
-		monthString: months[d.getMonth()],
-		month: d.getMonth(),
-		year: d.getFullYear(),
-		hours: hours,
-		minutes: minutes,
-		ampm: ampm
+		"dayString": days[d.getDay()],
+		"day": d.getDay(),
+		"monthString": months[d.getMonth()],
+		"month": d.getMonth(),
+		"year": d.getFullYear(),
+		hours,
+		minutes,
+		ampm
 	}
 }
 
 module.exports = {
-	"createListOfPermissions": createListOfPermissions,
-	"uuid": uuid,
-	"convertEta": convertEta,
-	"formatDate": formatDate
-}
+	createListOfPermissions,
+	uuid,
+	convertEta,
+	formatDate
+};
