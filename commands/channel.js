@@ -1,7 +1,5 @@
-const Discord = require("discord.js");
-// const auth = require("../auth/auth.js");
 const Utils = require("../util/utils.js");
-
+const CommandMap = require("../commands/CommandMap");
 /******************************************************
  *													  *
  *													  *
@@ -38,7 +36,7 @@ function add(message, commandArguments) {
 
 		if (channel) {
 			channelModel.findOne("USER_ID, CHANNEL_ID", [message.author.id, channel.id], (c, error) => {
-				if (error) { return console.log(error) };
+				if (error) { return console.log(error); }
 				if (c) {
 					message.author.send("Você já possui um canal personalizado no PlayersToPlay com este nome");
 				}
