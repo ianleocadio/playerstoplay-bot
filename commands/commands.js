@@ -10,7 +10,7 @@ commandsList.set(/^(?:wrf|warframe)$/g, require("./warframe/warframe.js").comman
 
 
 
-function commandTreatment(message, permFunction = () => {}, cb = () => {}){
+function commandTreatment(message, permFunction, cb){
 	if (!message) {
 		return null;
 	}
@@ -20,16 +20,24 @@ function commandTreatment(message, permFunction = () => {}, cb = () => {}){
 	try {
 		command = commandArguments[1].toLowerCase();
 	} catch (e) {
-		cb(e);
+		if (cb){
+			cb(e);
+		}
 		return null;
 	}
 
 	if (command === "perm"){
-		permFunction(message);
+		if (permFunction){
+			permFunction(message);
+		}
 		return null;
 	}
 
-	return command;
+	
+	return {
+		command, 
+		commandArguments
+	};
 }
 
 
