@@ -37,14 +37,17 @@ function configInfo() {
 
 function setTextChannel(message, commandArguments) {
     let textChannels = Array.prototype.slice.call(commandArguments, 2);
+    //console.log(textChannels);
     textChannels = Utils.arrayToMap(textChannels);
+    //console.log(textChannels);
 
     if (!textChannels) {return;}
 
-    for (let i = 0; i < textChannels.length; i++) {
+    textChannels.forEach((t) => {
         let textChannel = message.guild.channels.find((tc) => {
-            return (tc.name === textChannels.get(i)) && (tc.type === "text");
+            return (tc.name === t) && (tc.type === "text");
         });
+        //console.log(textChannel);
         if (textChannel) {
             if (!BOT_CONFIG.textChannels.includes(textChannel)) {
                 BOT_CONFIG.textChannels.push(textChannel);
@@ -52,7 +55,7 @@ function setTextChannel(message, commandArguments) {
                 return;
             }
         }
-    }
+    });
     let embed = configInfo();
     let canais = "\n";
     BOT_CONFIG.textChannels.map((tc) => {
@@ -67,12 +70,13 @@ function setTextChannel(message, commandArguments) {
 function setVoiceChannel(message, commandArguments) {
     let voiceChannels = Array.prototype.slice.call(commandArguments, 2);
     voiceChannels = Utils.arrayToMap(voiceChannels);
+    
 
     if (!voiceChannels) {return;}
 
-    for (let i = 0; i < voiceChannels.length; i++) {
+    voiceChannels.forEach((v) => {
         let voiceChannel = message.guild.channels.find((vc) => {
-            return (vc.name === voiceChannels(i)) && (vc.type === "voice");
+            return (vc.name === v) && (vc.type === "voice");
         });
         if (voiceChannel) {
             console.log(voiceChannel.name + " - " + voiceChannel.type);
@@ -82,7 +86,7 @@ function setVoiceChannel(message, commandArguments) {
                 return;
             }
         }
-    }
+    });
     let embed = configInfo();
     let canais = "\n";
     BOT_CONFIG.voiceChannels.map((vc) => {

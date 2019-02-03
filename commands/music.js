@@ -27,6 +27,8 @@ function formateTime(timeString) {
 		hour = Math.floor(timeString / 3600);
 		if (hour < 10) {
 			hourString = "0" + hour + ":";
+		}else{
+			hourString = hour + ":";
 		}
 		timeString = timeString % 3600;
 	}
@@ -34,14 +36,18 @@ function formateTime(timeString) {
 	var min = Math.floor(timeString / 60);
 	if (min < 10) {
 		minString = "0" + min + ":";
+	}else{
+		minString = min + ":";
 	}
 
 	var sec = Math.floor(timeString % 60);
 	if (sec < 10) {
 		secString = "0" + sec;
+	}else{
+		secString = sec;
 	}
 
-	return (hourString || hour || "00:") + (minString || min) + (secString || sec);
+	return (hourString || "00:") + (minString || "00:") + (secString || "00");
 }
 
 function playMusic(connection, message) {
@@ -77,7 +83,7 @@ function sendPlayInfo(message, queueObject, queuePosition, title) {
 function getPlayInfo(message, searchParam, showInfo) {
 
 	if (!message.member.voiceChannel) {
-		message.channel.sendMessage("Você precisa estar em um canal de voz para utilizar este comando!");
+		message.channel.send("Você precisa estar em um canal de voz para utilizar este comando!");
 		return;
 	} else if (!searchParam) {
 		message.reply("É preciso informar o link ou nome da música :wink:");
@@ -93,10 +99,10 @@ function getPlayInfo(message, searchParam, showInfo) {
 		if (err) {return console.log(err);}
 
 		let queueObject = {
-			"info": info,
+			info,
 			"requested_by": message.author
 		};
-		queuePosition = server.queue.push(queueObject);
+		let = queuePosition = server.queue.push(queueObject);
 		if (showInfo || typeof (showInfo) === "undefined"){
 			sendPlayInfo(message, queueObject, queuePosition, "Música adicionada!");
 		}
@@ -149,7 +155,7 @@ function play(message, searchParams) {
 		var opts = {
 			maxResults: 10,
 			key: (auth.yt_key || process.env.YT_KEY)
-		}
+		};
 		var query = "";
 
 		searchParams = Array.prototype.slice.call(searchParams, 2);
@@ -182,7 +188,7 @@ function playlist(message) {
 			} else {
 				embed
 					// .addBlankField()
-					.addField((i + 1) + " - " + musicInfo.title, "(" + formatedVideoTime + ")")
+					.addField((i + 1) + " - " + musicInfo.title, "(" + formatedVideoTime + ")");
 				// .addBlankField(true)
 				// .addField("Pedido por", object.requested_by.username+"#"+object.requested_by.discriminator, true)
 			}
@@ -285,12 +291,12 @@ var MusicPermissions = new Permissions(Utils.createListOfPermissions(functions))
  ******************************************************/
 let commandsList = new CommandMap();
 commandsList.set(/^(?:p|play)$/g, play);
-commandsList.set(/^(?:skip)$/g, skip);
+commandsList.set(/^(?:skip)$/g, end);
 commandsList.set(/^(?:stop)$/g, stop);
 commandsList.set(/^(?:pause)$/g, pause);
 commandsList.set(/^(?:playlist|pl|queue|q)$/g, playlist);
 commandsList.set(/^(?:now|playing)$/g, playing);
-commandsList.set(/^(?:h|help)$/g, play);
+commandsList.set(/^(?:h|help)$/g, musicHelp);
 commandsList.set(/^(?:p|play)$/g, play);
 
 function commands(message, bot) {

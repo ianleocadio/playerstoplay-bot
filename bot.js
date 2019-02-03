@@ -116,11 +116,9 @@ bot.on("message", (message) => {
 			return;
 		}
 
-		if (!(auth.STAFF.has(message.member.highestRole.id))
-			&&
-			BOT_CONFIG.textChannels.length > 0 && !BOT_CONFIG.textChannels.includes(message.channel)) {
+		if (!(auth.STAFF.has(message.member.highestRole.id)) && BOT_CONFIG.textChannels.length > 0 && !BOT_CONFIG.textChannels.includes(message.channel)) {
 			let str = "\n";
-			BOT_CONFIG.textChannels.map(function (tc) {
+			BOT_CONFIG.textChannels.map((tc) => {
 				str += "**" + tc.toString() + "**\n";
 			});
 			message.author.send("Os comandos deste bot só são permitidos nos chats: " + str);
