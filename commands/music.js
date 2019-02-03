@@ -231,20 +231,18 @@ function musicHelp(message) {
 	var embed = new Discord.RichEmbed()
 		.setTitle(title)
 		.setColor("GREEN");
-
-	var helpText = "-------------------------------\n\n";
-	helpText += "**1 - __Toca a música selecionada no canal de voz atual ou continua música atual__**\n";
-	helpText += "*Ex:  /music play [Link do vídeo do youtube]*\n*Ex: /music play*\n\n";
+	var helpText = "**1 - __Toca a música selecionada no canal de voz atual ou continua música atual__**\n";
+	helpText += "*Ex:  .music play [Link do vídeo do youtube]*\n*Ex: /music play*\n\n";
 	helpText += "**2 - __Lista a fila de músicas que serão tocadas em seguida__**\n";
-	helpText += "*Ex:  /music playlist*\n\n";
+	helpText += "*Ex:  .music playlist*\n\n";
 	helpText += "**3 - __Pausa música atual__**\n";
-	helpText += "*Ex:  /music pause*\n\n";
+	helpText += "*Ex:  .music pause*\n\n";
 	helpText += "**4 - __Pula para próxima música da playlist__**\n";
-	helpText += "*Ex:  /music skip*\n\n";
+	helpText += "*Ex:  .music skip*\n\n";
 	helpText += "**5 - __Para música e desconecta bot__**\n";
-	helpText += "*Ex:  /music stop*\n\n";
+	helpText += "*Ex:  .music stop*\n\n";
 	helpText += "**6 - __Exibe informações da música atual__**\n";
-	helpText += "*Ex:  /music playing*\n\n";
+	helpText += "*Ex:  .music playing*\n\n";
 
 	embed.setDescription(helpText);
 	// embed.setTimestamp();
