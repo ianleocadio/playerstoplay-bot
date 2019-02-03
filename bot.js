@@ -136,19 +136,20 @@ bot.on("message", (message) => {
 			if (command) {
 				command(message);
 			}else{
+				if (commands[0] === ".lulalivre") {
+					message.channel.send("LULA TA PRESO! BABACA!");
+					return;
+				}
+				if (commands[0] === ".gloria") {
+					message.channel.send("A DEUXXXXXX!!!");
+					return;
+				}
 				Commands.Help.possibleCommand(message);
 				return;
 			}
 		}
 
-		if (commands[0] === ".lulalivre") {
-			message.channel.send("LULA TA PRESO! BABACA!");
-			return;
-		}
-		if (commands[0] === ".gloria") {
-			message.channel.send("A DEUXXXXXX!!!");
-			return;
-		}	
+		
 
 	}
 

@@ -9,7 +9,6 @@ function createListOfPermissions(functions) {
 	return map;
 }
 
-
 function uuid() {
 	const uuidv4 = require("uuid/v4");
 	return uuidv4();
@@ -40,9 +39,21 @@ function formatDate(d = new Date()) {
 	};
 }
 
+function arrayToMap(array){
+	if (typeof(array) === "undefined" || array === undefined || array === null || array.length === 0){
+		return null;
+	}
+	let map = new Map();
+	array.map((elem, i) => {
+		map.set(i, elem);
+	});
+	return map;
+}
+
 module.exports = {
 	createListOfPermissions,
 	uuid,
 	convertEta,
-	formatDate
+	formatDate,
+	arrayToMap
 };
