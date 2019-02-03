@@ -40,7 +40,7 @@ function formatDate(d = new Date()) {
 }
 
 function arrayToMap(array){
-	if (typeof(array) === "undefined" || array === undefined || array === null || array.length === 0){
+	if (typeof(array) === "undefined" || array === null || array.length === 0){
 		return null;
 	}
 	let map = new Map();
