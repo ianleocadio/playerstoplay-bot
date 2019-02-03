@@ -14,6 +14,7 @@
     "ffmpeg-binaries": "^4.0.0",
     "google-images": "^2.1.0",
     "google-search": "0.0.5",
+    "hoek": "^4.2.1",
     "https": "^1.0.0",
     "nodemon": "^1.18.9",
     "on-change": "^1.0.0",
