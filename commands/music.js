@@ -6,6 +6,7 @@ const ytSearch = require("youtube-search");
 const YTDL = require("ytdl-core");
 const ytPlaylist = require("youtube-playlist-info");
 const CommandMap = require("../commands/CommandMap");
+const Commands = require("../commands/commands");
 //Global music queue
 var server = {
 	"queue": []
@@ -297,19 +298,10 @@ commandsList.set(/^(?:now|playing)$/g, playing);
 commandsList.set(/^(?:h|help)$/g, musicHelp);
 commandsList.set(/^(?:p|play)$/g, play);
 
-function commands(message, bot) {
-	var commandArguments = message.content.match(/\S+/g);
-	var command = null;
-	try {
-		command = commandArguments[1].toLowerCase();
-	} catch (e) {
-		return;
-	}
-
-	if (command === "perm"){
-		MusicPermissions.commands(message);
-		return;
-	}
+function commands(message) {
+	var command = Commands.commandTreatment(message, MusicPermissions.commands, (error) => {
+		message.channel.send("Comando inválido");
+	});
 
 	if (!command) {
 		musicHelp(message);

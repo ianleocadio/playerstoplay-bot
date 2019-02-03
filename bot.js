@@ -124,11 +124,10 @@ bot.on("message", (message) => {
 			Commands.Help.possibleCommand(message);
 			return;
 		}else{
-			//.wrf alerts
-			//command = "wrf";
-			command = Commands.commandsList.getCommandImplementation(command);
-			if (command) {
-				command(message);
+			let exec = Commands.commandsList.getCommandImplementation(command);
+			if (exec) {
+				exec(message);
+				return;
 			}else{
 				if (commands[0] === ".lulalivre") {
 					message.channel.send("LULA TA PRESO! BABACA!");

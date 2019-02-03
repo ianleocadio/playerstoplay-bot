@@ -1,5 +1,6 @@
 const Utils = require("../util/utils.js");
 const CommandMap = require("../commands/CommandMap");
+const Commands = require("../commands/commands.js");
 /******************************************************
  *													  *
  *													  *
@@ -131,19 +132,10 @@ let commandsList = new CommandMap();
 commandsList.set(/^(?:add)$/g, add);
 commandsList.set(/^(?:delete|remove)$/g, remove);
 
-function commands(message) {
-	var commandArguments = message.content.match(/\S+/g);
-	var command = null;
-	try {
-		command = commandArguments[1].toLowerCase();
-	} catch (e) {
-		return;
-	}
-
-	if (command === "perm"){
-		ChannelPermissions.commands(message);
-		return;
-	}
+function commands(message){
+	var command = Commands.commandTreatment(message, ChannelPermissions.commands, (error) => {
+		message.channel.send("Comando inválido");
+	});
 
 	if (!command) {
 		return;
