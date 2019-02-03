@@ -3,7 +3,6 @@ class CommandMap extends Map{
         super();
     }
 
-
     getCommandImplementation(command){
         //console.log(this);
         for (let [key, func] of this.entries()) {

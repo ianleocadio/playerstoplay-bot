@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const auth = require("./auth/auth.js");
 const Commands = require("./commands/commands.js");
 var BOT_CONFIG = require("./config/bot_config.js");
-const CommandMap = require("./commands/CommandMap");
+
 
 var bot = new Discord.Client({ disableEveryone: true });
 
@@ -86,17 +86,11 @@ function r34(message) {
 	});
 }
 
+// Custom Commands
 
-let commandsList = new CommandMap();
-commandsList.set(/^(?:clean|clear)$/g, cleanMessanges);
-commandsList.set(/^(?:h|help)$/g, Commands.Help.commands);
-commandsList.set(/^(?:add)$/g, Commands.Roles.addPlayerRole);
-commandsList.set(/^(?:m|music)$/g, Commands.Music.commands);
-commandsList.set(/^(?:c|config)$/g, Commands.Config.commands);
-commandsList.set(/^(?:ch|channel)$/g, Commands.Channel.commands);
-commandsList.set(/^(?:wrf|warframe)$/g, Commands.Warframe.commands);
-commandsList.set(/^(?:g|google)$/g, searchOnGoogle);
-commandsList.set(/^(?:r34)$/g, r34);
+Commands.commandsList.set(/^(?:clean|clear)$/g, cleanMessanges);
+Commands.commandsList.set(/^(?:g|google)$/g, searchOnGoogle);
+Commands.commandsList.set(/^(?:r34)$/g, r34);
 
 bot.on("message", (message) => {
 	let commands = message.content.toLowerCase().match(/\S+/g);
@@ -130,7 +124,9 @@ bot.on("message", (message) => {
 			Commands.Help.possibleCommand(message);
 			return;
 		}else{
-			command = commandsList.getCommandImplementation(command);
+			//.wrf alerts
+			//command = "wrf";
+			command = Commands.commandsList.getCommandImplementation(command);
 			if (command) {
 				command(message);
 			}else{
