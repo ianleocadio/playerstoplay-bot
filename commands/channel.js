@@ -140,6 +140,11 @@ function commands(message) {
 		return;
 	}
 
+	if (command === "perm"){
+		ChannelPermissions.commands(message);
+		return;
+	}
+
 	if (!command) {
 		return;
 	} else {
