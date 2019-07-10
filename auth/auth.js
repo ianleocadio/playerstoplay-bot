@@ -6,6 +6,9 @@ function authToken(c) {
 		c(auth.STAFF, auth.MEMBERS);
 
 	} catch (e) {
+
+		console.log(e);
+
 		auth = {
 			"token": process.env.BOT_TOKEN,
 			"yt_key": process.env.YT_KEY,
